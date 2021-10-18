@@ -1,0 +1,25 @@
+<div class="crypto-fund" style="cursor: pointer; display: flex; align-items: center;" *ngIf="abbrAddress && isCorrectNetwork">
+  <div class="eth mobile-padding-10" style="align-self: stretch; display: flex; align-items: center;">
+    <strong>{{ usdcBalance }} USDC</strong>
+  </div>
+  <div class="eth-add" style="display: flex; align-items: center;" (click)="toggleTransactionsShown()">
+    <strong>{{ abbrAddress }}</strong>
+    <div *ngIf="transactionsService.isTransactionsProcessing" class="loader"></div>
+  </div>
+</div>
+
+
+<div class="crypto-fund" style="cursor: pointer;" (click)="switch()" *ngIf="!abbrAddress || !isCorrectNetwork">
+  <div class="eth-add" style="display: flex; align-items: center;">
+    <strong>Switch to Matic</strong>
+    <div *ngIf="loading" class="loader"></div>
+  </div>
+</div>
+
+<app-alert-message
+  [title]="alertTitle"
+  [body]="alertBody"
+  style="height: 100%; width: 100%; z-index: 1; position: Fixed; top: 0; left: 0; text-align: left;"
+  *ngIf="willShowAlertMessage"
+  (onClose)="closeAlert()">
+</app-alert-message>

@@ -1,0 +1,383 @@
+
+.mobile-head{
+	display: flex;
+	padding: 0px;
+	display: none;
+}
+.mobile-head .row{
+	padding: 10px;
+}
+.head-row{
+	background-color: #fff;
+	padding: 20px;
+}
+.mobile-head .logo{
+	width: 120px;
+	padding: 0;
+	margin-top:5px;
+}
+.mobile-head .potfolio-btn{
+
+}
+.mobile-head .crypto-fund-row{
+	background-color: #fff;
+}
+.mobile-head .crypto-fund{
+	width: 100%;
+}
+.mobile-head .crypto-fund div{
+	background-color: #dfffff;
+	display: table-cell;
+}
+.mobile-head .crypto-fund .eth{
+	background-color: #bbe6e6;
+	width: 40%;
+}
+.mobile-head .drop{
+	background-color: #fff;
+	border-radius: 16px;
+}
+.mobile-head .total-asset{
+	background-image: linear-gradient(
+    to top,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,1) 100%);
+	text-align: center;
+	margin: 0;
+}
+.mobile-footer{
+	display: none;
+	padding:60px 0;
+	background-image: url(../images/sidebar-bg.png);
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    margin-left: -10px;
+    margin-bottom: -20px;
+    margin-right: -10px;
+}
+
+.mobile-footer .copyright{
+	position: initial;
+    bottom: 0;
+}
+
+@media (max-width: 1440px){
+	.main-container {
+    	min-width: 1280px;
+	}
+	.sidebar{
+		/*position: absolute;*/
+	}
+}
+@media (max-width: 818px){
+  #guarantorBox {
+    overflow: auto !important;
+    max-width: 95vw;
+  }
+  #guarantorBox .crypto-list-item {
+    height: 140px;
+    width: fit-content;
+  }
+  .guarantor-number {
+    min-width: 80px;
+  }
+  .guarantor-icon {
+    min-width: 100px !important;
+  }
+  #guarantorBox > div > div{
+    width: unset;
+  }
+  .mobile-gap-20 {
+    gap: 20px;
+    padding: 0 !important;
+  }
+  .protocol-item {
+    margin: 0 auto 32px !important;
+    width: auto;
+  }
+  .mobile-left-padding-0 {
+    padding: 20px 0 !important;
+  }
+  .mobile-padding-15 > div{
+    padding: 0 15px !important;
+  }
+  .mobile-witdh-100 {
+    width: 100% !important;
+  }
+  .crypto-list-title > td:first-child, .crypto-list-item > td:first-child {
+    border-left: none;
+  }
+  .crypto-list {
+    width:max-content;
+  }
+  .crypto-list-box {
+    padding: 0 10px !important;
+  }
+  .mobile-padding-10 {
+    padding: 0 0 0 10px !important;
+  }
+  .eth-add {
+    padding-right: 25px !important;
+  }
+  .guarantor-icon {
+    margin-right: 5px !important;
+  }
+  .mobile-top-info {
+    padding-bottom: 20px;
+  }
+  .mobile-top-info > div:first-child {
+    flex-direction: column;
+  }
+  .mobile-flex-column {
+    flex-direction: column;
+  }
+  .mobile-padding-0 {
+    padding: 0 !important;
+  }
+  .mobile-gap-20 {
+    gap: 20px;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .first-row {
+    display: block;
+  }
+  .hide-box {
+    display: none;
+  }
+  .mobile-top-part {
+    padding: 10px 0 !important;
+  }
+  .mobile-potfolio-btn {
+    display: inline-block !important;
+  }
+  .pc-potfolio-btn {
+    display: none !important;
+  }
+  .sec-staking-info {
+    padding-right: 0;
+  }
+  .padding-left-32, .padding-right-32 {
+    padding: 0;
+  }
+  #staking-claim {
+    display: flex;
+    float: right;
+    padding-right: 0;
+  }
+  .crypto-fund div{
+    background-color: #dfffff;
+    display: table-cell;
+  }
+  .crypto-fund .eth{
+    background-color: #bbe6e6;
+    width: 40%;
+  }
+	.mobile-head{
+		display: flex;
+	}
+	.main-container {
+    	min-width: auto;
+	}
+	.sidebar{
+		display: none;
+	}
+	.row.bottom-space{
+		display:none;
+	}
+	.main-content{
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-top: 10px;
+		box-shadow: none;
+    width: 100%;
+	}
+  .font-48-blue {
+    font-size: 18px !important;
+  }
+  .staking-top-info {
+    padding-left: 0;
+    padding-bottom: 20px;
+  }
+  .sec-staking-info {
+    padding-left: 0 !important;
+  }
+	.main-content .top-info .left{
+		width: 100%;
+		text-align: center;
+    	padding: 0 50px;
+    	margin-left: 0;
+	}
+	.main-content .top-info .left.total-asset{
+		background-image: linear-gradient( to top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+		border-radius: 15px
+	}
+	.main-content .top-info .left .number{
+		font-size: 20px;
+		line-height: 2;
+	}
+	.main-content .top-info .right{
+		display: none;
+	}
+	.column-4, .column-3{
+		width: 100%;
+	}
+	.risk-pool{
+		padding: 0;
+	}
+	.crypto-list{
+
+	}
+  .menu-item {
+    width: auto !important;
+    justify-content: center;
+  }
+	.menu-item a{
+		padding: 10px;
+	}
+	.crypto-list-box{
+		overflow-x: scroll;
+	}
+	tr td.crypto-list-search-td,tr td.crypto-list-td-first{
+		position: sticky;
+		background-color: #fff;
+		left: 0;
+		border-right: 1px solid #e3e3e3;
+	}
+	tr td.crypto-list-td-first{
+		max-width: 110px;
+	}
+	.mobile-footer{
+		display: block;
+	}
+	.pre-deposit,.box-wrap .button-box{
+		text-align: center;
+	}
+	.pre-deposit .column-8{
+		width:100%;
+		border:none;
+	}
+	.pre-deposit .column-6{
+		width:100%
+	}
+	.liquid{
+		text-align: center;
+	}
+	.liquid .box-wrap>.column-8{
+		border-bottom: 1px solid #e3e3e3;
+	}
+	.liquid .box-wrap .column-8{
+		width: 100%;
+	}
+	.liquid .box-wrap .column-2{
+		width: 50%;
+	}
+	.liquid .box-wrap .button-box .button{
+		width: 46%;
+		margin-bottom: 4px;
+		margin-left: 1%;
+		margin-right: 1%;
+		box-sizing: border-box;
+	}
+	.row.risk-menu .box-wrap{
+		background-image: none;
+	}
+	.row.button-row{
+		display: none;
+	}
+	.mobile-nav-risk{
+		display: block;
+		background:none;
+		padding: 30px 0;
+	}
+	.invis-mobile{
+		display: none!important;
+	}
+	.row.wallet{
+		text-align: center;
+	}
+
+	.row.wallet .box1, .row.wallet .box2{
+		width: 50%;
+		text-align: center;
+	}
+	.row.wallet .box3{
+		width: 100%;
+	}
+	.row.wallet .first-row{
+		border-radius: 15px;
+		background-color: #fff;
+
+	}
+	.row.wallet .mov-left-20{
+		margin-left:0;
+	}
+	.row.wallet .first-row>div{
+		display: inline-block;
+		padding: 20px;
+	}
+	.row.wallet.box2,{
+		border-right: 0;
+	}
+	.row.wallet .box3{
+		border-right: 0;
+		border-top: 1px solid#e3e3e3;
+	}
+	.summary .san-row{
+		background-color: #c9e9f4;
+		border-radius: 15px 15px 0 0;
+		border-bottom: 1px solid #e3e3e3;
+	}
+	.row.summary .first-row{
+		background-color: #c9e9f4;
+		background-image: none;
+		margin-top: 0;
+		border-radius: 0 0 15px 15px;
+		padding: 20px;
+	}
+	.row.summary .first-row{
+
+	}
+	.row.summary .first-row>div{
+		background-color: #fff;
+		width: 100%;
+		margin-top: 10px;
+		border-radius: 15px;
+	}
+	.wrap-box>div{
+
+	}
+	.san-row>div{
+		display: inline-block;
+		vertical-align: top;
+		padding-top: 20px;
+	}
+	.row.summary .sn-bo .box1{
+		width: 50%;
+		display: inline-block;
+	}
+	.row.summary .box2{
+		width: 50%;
+	}
+	.row.summary .box3{
+		padding: 20px;
+		width: 100%;
+		border-bottom: 1px solid #e3e3e3;
+	}
+	.row.summary .box3>div{
+		width: 100%;
+		display: inline-block;
+	}
+	.row.summary .box4{
+		width: 100%;
+	}
+	.wrap-box>div{
+		display: inline-block;
+		vertical-align: top;
+		padding: 0;
+	}
+  .amount-box button{
+    margin-top: 12px;
+  }
+}

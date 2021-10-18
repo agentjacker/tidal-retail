@@ -1,0 +1,40 @@
+<div class="mobile-head container main-container">
+  <div class="content">
+    <div class="head-row row">
+      <div class="logo fl">
+        <a href="index.html"><img src="/assets/images/logo.png"></a>
+      </div>
+      <div class="potfolio-btn fr">
+        <a class="button" href="javascript:void(0)" (click)="goToPortfolio()">My Reward</a>
+      </div>
+    </div>
+    <div class="crypto-fund-row row" style="display: flex;flex-flow: row-reverse;gap: 10px;">
+      <app-account></app-account>
+      <button class="config-btn" (click)="showSettings()" style="border: none;">
+        <img src="/assets/images/ledger.svg" style="width: 30px;
+        height: 24px;">
+      </button>
+    </div>
+    <div class="row mobile-nav">
+      <div class="menu-item actived">
+        <a href="javascript:void(0)" (click)="changeMenuStatus()">{{ menuTitles[menuItems.indexOf(key)] }}<i *ngIf="this.menuHidden" class="icon-down"><img src="/assets/images/icon-down-arrow.png"></i><i *ngIf="!this.menuHidden" class="icon-down"><img src="/assets/images/icon-up-arrow.png"></i></a>
+      </div>
+      <ul class="drop" *ngIf="!menuHidden">
+        <li class="menu-item" *ngFor="let item of getRestItems()" [ngClass]="{'actived': key===item}"><a href="javascript:void(0)" (click)="goTo(item)">{{ menuTitles[menuItems.indexOf(item)] }}</a></li>
+      </ul>
+    </div>
+    <div class="row" style="display: none;">
+      <p class="row total-asset">
+        <strong class="title sim-title">Total asset under coverage</strong>
+      <br/>
+        <span class="number"></span>
+      </p>
+    </div>
+  </div>
+</div>
+<app-settings
+  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0;"
+  *ngIf="willShowSettings"
+  (onClose)="closeSettings()"
+  >
+</app-settings>

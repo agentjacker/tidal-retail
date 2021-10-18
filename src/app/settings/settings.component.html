@@ -1,0 +1,21 @@
+<div class="popup-bg">
+  <div class="popup-window" style="text-align: center; background-color: #dfffff; max-width: 380px; height: 200px;">
+    <div class="popup-title title" style="font-size: 18px; padding-left: 32px; background-color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+      Settings
+      <a class="icon fr" href="javascript:void(0)" (click)="close()">x</a>
+    </div>
+    <div style="padding-left: 48px; padding-right: 48px; margin-top: 0px; padding-top: 8px; background-color: #dfffff;">
+      <div style="width: 100%; display: inline-block; margin-top: 16px;" >
+        <div class="info-line">
+          Turn off Biconomy if you use a ledger, MATIC would be required for small transaction fees
+        </div>
+        <p class="title" style="float: left; font-size: 14px;">Use Biconomy</p>
+        <p class="number" style="float: right; font-size: 14px;">
+          <span class="switch" [ngClass]="{'active': willUseBiconomy}" (click)="toggleBiconomy()">
+            <span class="switch-toggle" [ngClass]="{'active': willUseBiconomy}"></span>
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div *ngIf="notificationShown" class="notification__wrapper"
+     [ngClass]="{'error' : notificationsService.type === 'error', 'success': notificationsService.type === 'success'}">
+  <a class="icon fr" href="javascript:void(0)" (click)="notificationsService.hideNotification()">x</a>
+  <div >
+    <div class="title">{{ notificationsService.title }}</div>
+    <div class="body">{{ notificationsService.body }}</div>
+    <div class="link" *ngIf="notificationsService.transactionHash">
+      <a [href]="'https://polygonscan.com/tx/' + notificationsService.transactionHash" target="_blank">View</a>
+    </div>
+  </div>
+</div>

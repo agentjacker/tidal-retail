@@ -1,0 +1,29 @@
+<div class="popup-bg">
+  <div class="popup-window" style="text-align: center; background-color: #dfffff; max-width: 380px; height: 450px;">
+    <div class="popup-title title" style="font-size: 18px; padding-left: 32px; background-color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+      Decrease Pre-deposit Balance
+      <a class="icon fr" href="javascript:void(0)" (click)="close()">x</a>
+    </div>
+    <div style="padding-left: 48px; padding-right: 48px; margin-top: 0px; padding-top: 4px; background-color: #dfffff;">
+      <div style="display: inline-block;">
+      <div style="float: left; margin-right: 6px;"><img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-top: 16px;" /></div>
+      
+      <p style="color: #4c6db9; overflow: hidden; text-align: left;">
+      Pre-deposit balance is used to pay weekly cover cost. Amount will be automatically deducted at the beginning of the week to save gas of manual transaction.
+      </p>
+      </div>
+    <div style="width: 100%; display: inline-block;">
+      <p style="color: #002f9b; margin-top: 8px; float: left">Amount to Decrease:</p>
+    </div>
+    <div class="deposit-input">
+        <input style="-webkit-appearance: none;" type="number" placeholder="" [(ngModel)]="amount" value="{{amount}}" min="0" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? this.value : null" />
+        <a href="javascript: void(0)" (click)="max()">Max</a>
+    </div>
+    <button class="pbutton" [ngStyle]="{'background-color': willDisableButton() ? 'grey': '#002f9b'}" (click)="withdraw()" [disabled]="willDisableButton()" >{{ getNumber(amount) > getNumber(predepositBalance)? 'Insufficient Fund' : 'Withdraw' }} <span class="icon-spinner" *ngIf="loading"></span></button>
+    <div style="width: 100%; display: inline-block; margin-top: 24px;" >
+      <p class="title" style="float: left; font-size: 13px;">My Pre-deposit Balance:</p>
+      <p class="number" style="float: right; font-size: 13px;">{{ getNumber(predepositBalance).toFixed(2) }} USDC</p>
+    </div>
+  </div>
+</div>
+</div>

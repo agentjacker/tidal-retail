@@ -1,0 +1,16 @@
+.top-part {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: linear-gradient(
+    90deg
+    , #C6FDFF 0%, #DFFFFF 100%);
+}
+
+.config-btn {
+  margin: 0 10px;
+  border: none;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}

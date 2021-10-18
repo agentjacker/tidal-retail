@@ -1,0 +1,33 @@
+.switch {
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  width:32px;
+  height: 18px;
+  text-align: left;
+  display: block;
+  cursor: pointer;
+}
+
+.switch.active {
+  background-color: #88DDFE;
+  text-align: right;
+}
+
+.switch .switch-toggle {
+  background-color: #999999;
+  border-radius: 8px;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+.switch .switch-toggle.active {
+  background-color: #002f9b;
+}
+
+.info-line {
+  width: 100%;
+  display: block;
+  color: #666666;
+  text-align: left;
+}

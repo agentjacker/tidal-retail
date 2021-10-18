@@ -1,0 +1,39 @@
+<div class="popup-bg">
+  <div class="popup-window" style="text-align: center; background-color: #dfffff; max-width: 380px;">
+    <div class="popup-title title" style="font-size: 18px; padding-left: 32px; background-color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+      File a Claim
+      <a class="icon fr" href="javascript:void(0)" (click)="close()">x</a>
+    </div>
+    <div style="padding-left: 48px; padding-right: 48px; margin-top: 0px; padding-top: 8px; background-color: #dfffff;">
+      <div style="display: inline-block;">
+        <div style="float: left; margin-right: 6px;"><img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-top: 16px;" /></div>
+
+        <p style="color: #4c6db9; overflow: hidden; text-align: left;">
+          Select the asset that you think had an accident and pay 20 USDC to file a claim.
+        </p>
+      </div>
+    </div>
+
+    <div style="width: 100%; display: inline-block; margin-top: 1px;">
+      <ng-container *ngFor="let asset of allAssets">
+        <span class="asset-box" (click)="toggleAsset(asset.index)"
+            [ngClass]="{'active': asset.index == assetIndex}">
+          <img src="/assets/images/a{{ asset.index + 1 }}.png">
+          <span>{{ asset.symbol }}</span>
+        </span>
+      </ng-container>
+    </div>
+
+    <button class="pbutton" [disabled]="claiming" (click)="claim()">
+      Claim <span class="icon-spinner" *ngIf="claiming"></span>
+    </button>
+  </div>
+</div>
+
+<app-alert-message
+  [title]="alertTitle"
+  [body]="alertBody"
+  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0;"
+  *ngIf="willShowAlertMessage"
+  (onClose)="closeAlert()">
+</app-alert-message>

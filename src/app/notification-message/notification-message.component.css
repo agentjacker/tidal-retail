@@ -1,0 +1,33 @@
+.notification__wrapper{
+  position: fixed;
+  right: 30px;
+  top: 65px;
+  min-width: 300px;
+  max-width: 300px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: white;
+  transition: all 2s linear;
+  z-index: 150;
+}
+
+.success {
+  background-color: #d9edff;
+}
+
+.error {
+  background-color: #ffedf0;
+}
+
+.success .title{
+  color: dodgerblue;
+}
+
+.error .title{
+  color: orangered;
+}
+
+.link, .link:visited, link:active{
+  color: #002f9b;
+}
