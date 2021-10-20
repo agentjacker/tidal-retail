@@ -70,6 +70,23 @@
 	}
 }
 @media (max-width: 818px){
+  body {
+	  max-width: 100vw;
+	  overflow-x: hidden;
+  }
+  #toggleTabBar {
+	  width: 100%;
+  }
+  #toggleTabBar > div {
+	  width: 50% !important;
+  }
+  .margin-12-per, .padding-14-per {
+	margin: auto !important;
+	padding: unset !important;
+  }
+  .mobile-flex-column {
+	  flex-direction: column;
+  }
   #guarantorBox {
     overflow: auto !important;
     max-width: 95vw;
@@ -91,6 +108,13 @@
     gap: 20px;
     padding: 0 !important;
   }
+  .protocol-box {
+	  gap: 15px;
+  }
+  .guarantor-operation {
+	  width: auto !important;
+	  padding-right: 15px;
+  }
   .protocol-item {
     margin: 0 auto 32px !important;
     width: auto;
@@ -109,9 +133,11 @@
   }
   .crypto-list {
     width:max-content;
+	width: 100%;
   }
   .crypto-list-box {
     padding: 0 10px !important;
+	max-width: 95vw;
   }
   .mobile-padding-10 {
     padding: 0 0 0 10px !important;
@@ -237,7 +263,7 @@
 		padding: 10px;
 	}
 	.crypto-list-box{
-		overflow-x: scroll;
+		overflow-x: scroll !important;
 	}
 	tr td.crypto-list-search-td,tr td.crypto-list-td-first{
 		position: sticky;

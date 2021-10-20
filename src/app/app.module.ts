@@ -19,6 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsComponent } from './settings/settings.component';
 import { BuyAdjustcoverageComponent } from './buy-adjustcoverage/buy-adjustcoverage.component';
 import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
+import { PaginatorComponent } from './paginator/paginator.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
     SettingsComponent,
     FileAClaimComponent,
     BuyAdjustcoverageComponent,
+    PaginatorComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,12 @@
 <div class="content row top-info top-title padding-14-per ">
   <div class="left column-6">
     <h2 class="title font-48-blue margin-top--20">Buy cover</h2>
+    <p class="des font-16-blue">for protocol</p>
   </div>
 </div>
 <div id="toggleTabBar" class="margin-12-per">
-  <div (click)="toggleTab($event, '#overviewBox')" id="overview" class="flex-center-item tab-active"><p >Overview</p></div>
-  <div (click)="toggleTab($event, '#usersettingBox')" id="usersetting" class="flex-center-item"><p>User Purchase Setting</p></div>
+  <div (click)="toggleTab($event, '#overviewBox')" id="overview" class="flex-center-item tab-active"><p >Pay with POND</p></div>
+  <div (click)="toggleTab($event, '#usersettingBox')" id="usersetting" class="flex-center-item"><p>Pay with USDC</p></div>
 </div>
 
 <div id="overviewBox" class="tab-content margin-12-per">
@@ -108,11 +109,15 @@
     </table>
   </div>
 </div>
+<div class="crypto-list row">
+  <app-paginator></app-paginator>
+</div>
+
 </div>
 <!-- user purchase settting tab content-->
 <div id="usersettingBox" class="tab-content margin-12-per" style="display: none;">
   <div class="row pre-deposit " *ngIf="true" id="buyBox">
-    <div class="box-wrap " style="display: flex;gap: 28px;background-color: unset;">
+    <div class="box-wrap mobile-flex-column" style="display: flex;gap: 28px;background-color: unset;">
       <div class="column-6 number-box">
         <div class="column-4">
           <p class="title" style="margin: 0;display: flex;">Total Covered Amount<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
@@ -180,6 +185,8 @@
       </table>
     </div>
   </div>
+
+  <app-paginator></app-paginator>
 </div>
 
 <!-- <app-file-a-claim

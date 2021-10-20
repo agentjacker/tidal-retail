@@ -1,0 +1,29 @@
+<div>
+  <div style="display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  gap: 16px;"
+  id="paginatorBox"
+  >
+    <span>First</span>
+    <button id="firstPage" class="btn-toggle"
+    >
+  <img src="/assets/images/prev-unactive.svg" *ngIf="currentPageIdx == 0">
+  <img src="/assets/images/prev-active.svg" *ngIf="currentPageIdx !== 0">
+  </button>
+    <ul id="page-grid-list">
+      <button *ngFor="let page of pageList; index as i;" class="page-grid" [ngClass]="{
+        'grid-btn-active': i == 0
+      }">
+    {{i + 1}}
+    </button>
+    </ul>
+    <button id="lastPage" class="btn-toggle">
+      <img src="/assets/images/next-unactive.svg" *ngIf="currentPageIdx == pageList.length - 1">
+      <img src="/assets/images/next-active.svg" *ngIf="currentPageIdx !== pageList.length - 1">
+    </button>
+    <span>Last</span>
+  </div>
+</div>
