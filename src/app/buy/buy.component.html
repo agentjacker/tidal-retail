@@ -96,14 +96,18 @@
     <table class="crypto-list-tab" style="width: 100%">
       <tr class="crypto-list-title">
         <td><strong>Date</strong></td>
-        <td><strong>Covered TVL Actual</strong></td>
+        <td><strong>Covered TVL (Target)</strong></td>
         <td><strong>Paid Amount</strong></td>
+        <td><strong>Covered TVL (Actual)</strong></td>
+        <td><strong>Refund</strong></td>
       </tr>
       <ng-container  *ngFor="let record of filteredBuyerHistory">
         <tr class="crypto-list-item">
           <td><span class="number">{{ record.date }}</span></td>
           <td><span class="number">{{ record.subscription }}</span></td>
           <td><span class="number">{{ record.premium }}</span></td>
+          <td><span class="number">{{ record.assetBalance }}</span></td>
+          <td><span class="number">{{ record.refund }}</span></td>
         </tr>
       </ng-container>
     </table>
@@ -118,38 +122,28 @@
 <div id="usersettingBox" class="tab-content margin-12-per" style="display: none;">
   <div class="row pre-deposit " *ngIf="true" id="buyBox">
     <div class="box-wrap mobile-flex-column" style="display: flex;gap: 28px;background-color: unset;">
-      <div class="column-6 number-box">
-        <div class="column-4">
-          <p class="title" style="margin: 0;display: flex;">Total Covered Amount<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-          <p class="number font-36-blue" style="margin-top: 12px;">${{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue"></span>
-            <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
-          </p>
+      <div class="box-wrap" style="display: flex;gap: 28px;background-color: unset;">
+        <div class="column-8 number-box">
+          <div class="column-4" style="padding-left: 34px;padding-top: 30px;">
+            <p class="title" style="margin: 0;display: flex;">My Predeposit Balance<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
+            <p class="number font-36-blue" style="margin-top: 12px;">{{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue">USDC</span>
+              <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
+            </p>
+          </div>
+          <div class="column-4 padding-top-60" style="border-width: 0">
+              <a href="javascript:void(0)" (click)="showDeposit()" class="button">Deposit</a>
+          </div>
+          <div class="column-3 padding-top-60" style="border-width: 0">
+            <a href="javascript:void(0)" (click)="showWithdraw()" class="button">Withdraw</a>
         </div>
-        <div class="column-4" style="border-width: 0;">
-          <p class="title" style="margin: 0;display: flex;">User Purchase Capacity<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-          <p class="number fontsize-32-bold color-green" style="margin-top: 12px;">${{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue"></span>
-            <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
-          </p>
         </div>
-        <div class="column-4" style="border-width: 0">
-          <a href="javascript:void(0)" (click)="showAdjust('protocolCoverage')" class="button adjust-button" >Adjust</a>
-        </div>
-      </div>
-      <div class="column-6 number-box">
-        <div class="column-4">
-          <p class="title" style="margin: 0;display: flex;">Premium Fee (Weekly)<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-          <p class="number font-36-blue" style="margin-top: 12px;">${{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue"></span>
-            <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
-          </p>
-        </div>
-        <div class="column-4" style="border-width: 0;">
-          <p class="title" style="margin: 0;display: flex;">User Premium Fee (Weekly)<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-          <p class="number fontsize-32-bold color-yellow" style="margin-top: 12px;">${{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue"></span>
-            <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
-          </p>
-        </div>
-        <div class="column-4" style="border-width: 0">
-          <a href="javascript:void(0)" (click)="showAdjust('premiumFee')" class="button adjust-button">Adjust</a>
+        <div class="column-4 number-box" style="display: flex;
+        justify-content: center;align-items: center;">
+          <div id="coverageBox">
+            <p class="title" style="display: flex;">Estimate Coverage Period<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
+            <p class="number" *ngIf="sumOfPremium">{{ weeksBeCovered }} Weeks</p>
+            <p *ngIf="!sumOfPremium">Not covered yet</p>
+          </div>
         </div>
       </div>
     </div>
