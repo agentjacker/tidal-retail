@@ -23,7 +23,25 @@ export class BuyComponent implements OnInit {
 
   currentWeek: number = 0;
   userBuyerInfo: any = {};
-  filteredBuyerHistory = [];
+  filteredBuyerHistory = [{
+    date: '10/21/2021',
+    subscription: '$100,100',
+    premium: '$3423',
+    assetBalance: '$324',
+    refund: '$1000'
+  },{
+    date: '10/21/2021',
+    subscription: '$100,100',
+    premium: '$3423',
+    assetBalance: '$324',
+    refund: '$1000'
+  },{
+    date: '10/21/2021',
+    subscription: '$100,100',
+    premium: '$3423',
+    assetBalance: '$324',
+    refund: '$1000'
+  }];
 
   willShowDeposit: boolean = false;
   willShowWithdraw: boolean = false;
@@ -77,6 +95,9 @@ export class BuyComponent implements OnInit {
           assetSymbol: asset.symbol
         };
       });
+      let temp = this.allAssets;
+      this.allAssets = [];
+      this.allAssets.push(temp[0])
     })(), (async () => {
       if (this.contractService.address && this.hasAsset) {
         this.predepositBalance = await this.contractService.getPredepositBalance(
@@ -115,6 +136,13 @@ export class BuyComponent implements OnInit {
             assetBalance: this.formatBalance(r.assetBalance / (10 ** environment.usdcDecimals)),
           };
         });
+        this.filteredBuyerHistory.push({
+          date: '10/21/2021',
+          subscription: '$100,100',
+          premium: '$3423',
+          assetBalance: '$324',
+          refund: '$1000'
+        })
         this.filteredBuyerHistory = this.filteredBuyerHistory.reverse();
       }
     })()];

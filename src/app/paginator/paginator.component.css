@@ -1,0 +1,33 @@
+.btn-toggle {
+    width: 59px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 1px solid #8EA2D2;
+    box-sizing: border-box;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.page-grid {
+    width: 36px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 1px solid #8EA2D2;
+    box-sizing: border-box;
+    border-radius: 0px;
+    border-right: none;
+    cursor: pointer;
+    color: #4C6DB9;
+}
+
+#paginatorBox {
+    font-size: 14px;
+    color: #4C6DB9;
+}
+.grid-btn-active {
+    background: #4C6DB9;
+    color: white;
+}
+
+#page-grid-list button:last-child {
+    border-right: 1px solid #8EA2D2;
+}

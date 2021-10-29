@@ -1,20 +1,7 @@
 <div class="top-part top-info  padding-top-32  mobile-top-part padding-14-per">
-  <button class="config-btn pc-potfolio-btn" (click)="showSettings()">
-    <img src="/assets/images/ledger.svg" style="width: 30px;
-    height: 24px;">
-  </button>
   <app-account class="hide-box"></app-account>
-  <div class="potfolio-btn fr pc-potfolio-btn">
-    <a class="button" href="javascript:void(0)" (click)="goToPortfolio()">My Reward</a>
-  </div>
 </div>
 <app-buy *ngIf="key=='buy'" (onGoTo)="goTo($event)"></app-buy>
-<app-settings
-  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0;"
-  *ngIf="willShowSettings"
-  (onClose)="closeSettings()"
-  >
-</app-settings>
 <app-alert-message
   [title]="alertTitle"
   [body]="alertBody"
