@@ -99,66 +99,34 @@ export class ContractService {
     return this.usdcBalance;
   }
 
-  async getPredepositBalance(address) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    const value = await buyer.methods.getBalance(address).call();
-    return this.getFixedTwoStr((+value) / (10 ** environment.usdcDecimals))
+  async getUserInfo(address) {
+    const retailHelper = new this.web3.eth.Contract(
+        environment.retailHelperAbi, environment.retailHelperAddress);
+    return await retailHelper.methods.userInfoMap(environment.assetIndex, address).call();
   }
 
-  async getTotalFuturePremium(address) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    const value = await buyer.methods.getTotalFuturePremium(address).call();
-    return this.getFixedTwoStr((+value) / (10 ** environment.usdcDecimals));
+  async getAssetInfo() {
+    const retailHelper = new this.web3.eth.Contract(
+        environment.retailHelperAbi, environment.retailHelperAddress);
+    return await retailHelper.methods.assetInfoMap(environment.assetIndex).call();
   }
 
-  async getCurrentSubscription(assetIndex) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    const value = await buyer.methods.currentSubscription(assetIndex).call();
-    return this.getFixedTwoStr((+value) / (10 ** environment.usdcDecimals));
+  async getSubscriptionByUser(address) {
+    const retailHelper = new this.web3.eth.Contract(
+        environment.retailHelperAbi, environment.retailHelperAddress);
+    return await retailHelper.methods.subscriptionByUser(environment.assetIndex, address).call();
   }
 
-  async getFutureSubscription(assetIndex) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    const value = await buyer.methods.futureSubscription(assetIndex).call();
-    return this.getFixedTwoStr((+value) / (10 ** environment.usdcDecimals));
+  async getPremiumRate(address) {
+    const retailHelper = new this.web3.eth.Contract(
+        environment.retailHelperAbi, environment.retailHelperAddress);
+    return await retailHelper.methods.getPremiumRate(environment.assetIndex, address).call();
   }
 
-  async getAllSellerBalance(category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const value = await seller.methods.categoryBalance(category).call();
-    return this.getFixedTwoStr((+value) / (10 ** environment.usdcDecimals));
-  }
-
-  async getSellerCurrentBalance(address, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const value = await seller.methods.userBalance(address, category).call();
-    return this.getFixedTwoStr((+value[0]) / (10 ** environment.usdcDecimals));
-  }
-
-  async getSellerFutureBalance(address, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const value = await seller.methods.userBalance(address, category).call();
-    return this.getFixedTwoStr((+value[1]) / (10 ** environment.usdcDecimals));
-  }
-
-  async isSellerCurrentBasket(address, assetIndex) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    return await seller.methods.userBasket(address, assetIndex).call();
-  }
-
-  async getAllGuarantorBalance(assetIndex, decimal) {
-    const guarantor = new this.web3.eth.Contract(environment.guarantorAbi, environment.guarantorAddress);
-    const value = await guarantor.methods.assetBalance(assetIndex).call();
-    return this.getFixedTwoStr((+value) / (10 ** decimal));
-  }
-
-  async getGuarantorUserBalance(address, assetIndex, decimal) {
-    const guarantor = new this.web3.eth.Contract(environment.guarantorAbi, environment.guarantorAddress);
-    const value = await guarantor.methods.userBalance(address, assetIndex).call();
-    return {
-      currentBalance: this.getFixedTwoStr((+value[0]) / (10 ** decimal)),
-      futureBalance: this.getFixedTwoStr((+value[1]) / (10 ** decimal))
-    };
+  async getEffectiveCapacity() {
+    const retailHelper = new this.web3.eth.Contract(
+        environment.retailHelperAbi, environment.retailHelperAddress);
+    return await retailHelper.getEffectiveCapacity(environment.assetIndex).call();
   }
 
   _send(sendHandler, transaction) {
@@ -235,154 +203,48 @@ export class ContractService {
     return '0x' + hex.join('');
   }
 
-  async buyerDeposit(amount) {
-    const buyer = new (this._getWeb3().eth.Contract)(environment.buyerAbi, environment.buyerAddress);
-    const res = buyer.methods.deposit(this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
-  }
-
-  async buyerWithdraw(amount) {
-    const buyer = new (this._getWeb3().eth.Contract)(environment.buyerAbi, environment.buyerAddress);
-    const res = buyer.methods.withdraw(this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.buyerWithdrawTransaction);
-  }
-
-  async buyerSubscribe(assetIndex, amount) {
-    const buyer = new (this._getWeb3().eth.Contract)(environment.buyerAbi, environment.buyerAddress);
-    const res = buyer.methods.subscribe(assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.buyerSubscribeTransaction);
-  }
-
-  async buyerUnsubscribe(assetIndex, amount) {
-    const buyer = new (this._getWeb3().eth.Contract)(environment.buyerAbi, environment.buyerAddress);
-    const res = buyer.methods.unsubscribe(assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.buyerUnsubscribeTransaction);
-  }
-
-  async sellerDeposit(category, amount) {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.deposit(category, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.sellerDepositTransaction);
-  }
-
-  async sellerReduceDeposit(category, amount) {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.reduceDeposit(category, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.sellerReduceDepositTransaction);
-  }
-
-  async sellerWithdraw(category, amount) {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.withdraw(category, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.sellerWithdrawTransaction);
-  }
-
-  async sellerUserBasket(who, assetIndex) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const value = await seller.methods.userBasket(who, assetIndex).call();
-    return +value;
-  }
-
-  async sellerChangeBasket(category, basketIndexes) {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.changeBasket(category, basketIndexes).send({from: this.address});
-    return this._send(res, transactionsDescriptions.sellerBasketUpdatingTransaction);
-  }
-
-  async guarantorDeposit(assetIndex, amount, decimals) {
-    const guarantor = new (this._getWeb3().eth.Contract)(environment.guarantorAbi, environment.guarantorAddress);
-    const res = guarantor.methods.deposit(assetIndex, this._decToHex(amount, decimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.guarantorDepositTransaction);
-  }
-
-  async guarantorReduceDeposit(assetIndex, amount, decimals) {
-    const guarantor = new (this._getWeb3().eth.Contract)(environment.guarantorAbi, environment.guarantorAddress);
-    const res = guarantor.methods.reduceDeposit(assetIndex, this._decToHex(amount, decimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.guarantorReduceDepositTransaction);
-  }
-
-  async guarantorWithdraw(assetIndex, amount, decimals) {
-    const guarantor = new (this._getWeb3().eth.Contract)(environment.guarantorAbi, environment.guarantorAddress);
-    const res = guarantor.methods.withdraw(assetIndex, this._decToHex(amount, decimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.guarantorWithdrawTransaction);
-  }
-
-  async getNextWeekBasket(who, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const week = +(await seller.methods.getCurrentWeek().call());
-    const request = await seller.methods.basketRequestMap(who, week + 1, category).call();
-    if (request.time > 0) {
-      const indexes = await seller.methods.getPendingBasket(who, category, week + 1).call();
-      return {has: true, indexes: indexes};
+  async deposit(amount, isBase=true) {
+    const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
+    if (isBase) {
+      const res = retailHelper.methods.depositBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
     } else {
-      return {has: false, indexes: []};
+      const res = retailHelper.methods.depositAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
     }
   }
 
-  async getNextNextWeekBasket(who, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const week = +(await seller.methods.getCurrentWeek().call());
-    const request = await seller.methods.basketRequestMap(who, week + 2, category).call();
-    if (request.time > 0) {
-      const indexes = await seller.methods.getPendingBasket(who, category, week + 2).call();
-      return {has: true, indexes: indexes};
+  async withdraw(amount, isBase=true) {
+    const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
+    if (isBase) {
+      const res = retailHelper.methods.withdrawBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
     } else {
-      return {has: false, indexes: []};
+      const res = retailHelper.methods.withdrawAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
     }
   }
 
-  async getPendingBasket(who, category) {
-    let data = await this.getNextNextWeekBasket(who, category);
-    if (data.has) return data;
-    return await this.getNextWeekBasket(who, category);
+  async subscribe(amount, isBase=true) {
+    const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
+    if (isBase) {
+      const res = retailHelper.methods.subscribeBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+    } else {
+      const res = retailHelper.methods.subscribeAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+    }
   }
 
-  async getSellerNextWeekWithdraw(who, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const week = +(await seller.methods.getCurrentWeek().call());
-    const request = await seller.methods.withdrawRequestMap(who, week + 1, category).call();
-    return +(this.getFixedTwoStr((+request.amount) / (10 ** environment.usdcDecimals)));
-  }
-
-  async getSellerNextNextWeekWithdraw(who, category) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    const week = +(await seller.methods.getCurrentWeek().call());
-    const request = await seller.methods.withdrawRequestMap(who, week + 2, category).call();
-    return +(this.getFixedTwoStr((+request.amount) / (10 ** environment.usdcDecimals)));
-  }
-
-  async getGuarantorNextWeekWithdraw(who, assetIndex, decimal) {
-    const guarantor = new this.web3.eth.Contract(environment.guarantorAbi, environment.guarantorAddress);
-    const week = +(await guarantor.methods.getCurrentWeek().call());
-    const request = await guarantor.methods.withdrawRequestMap(who, week + 1, assetIndex).call();
-    return +(this.getFixedTwoStr((+request.amount) / (10 ** decimal)));
-  }
-
-  async getGuarantorNextNextWeekWithdraw(who, assetIndex, decimal) {
-    const guarantor = new this.web3.eth.Contract(environment.guarantorAbi, environment.guarantorAddress);
-    const week = +(await guarantor.methods.getCurrentWeek().call());
-    const request = await guarantor.methods.withdrawRequestMap(who, week + 2, assetIndex).call();
-    return +(this.getFixedTwoStr((+request.amount) / (10 ** decimal)));
-  }
-
-  async getUserSellerInfo(who) {
-    const seller = new this.web3.eth.Contract(environment.sellerAbi, environment.sellerAddress);
-    return await seller.methods.userInfo(who).call();
-  }
-
-  async getUserGuarantorInfo(who) {
-    const guarantor = new this.web3.eth.Contract(environment.guarantorAbi, environment.guarantorAddress);
-    return await guarantor.methods.userInfo(who).call();
-  }
-
-  async getUserBuyerInfo(who) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    return await buyer.methods.userInfoMap(who).call();
-  }
-
-  async getCurrentWeek() {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    return +(await buyer.methods.getCurrentWeek().call());
+  async unsubscribe(amount, isBase=true) {
+    const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
+    if (isBase) {
+      const res = retailHelper.methods.unsubscribeBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+    } else {
+      const res = retailHelper.methods.unsubscribeAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+    }
   }
 
   async getNetworkName() {
@@ -413,112 +275,6 @@ export class ContractService {
         return 'matic-mumbai'
       default:
         return 'unknown';
-    }
-  }
-
-  async buyerClaimBonus() {
-    const buyer = new (this._getWeb3().eth.Contract)(environment.buyerAbi, environment.buyerAddress);
-    const res = buyer.methods.claimBonus().send({from: this.address});
-    console.log('Buyer Claim Bonus');
-    return await this._send(res, transactionsDescriptions.buyerClaimBonusTransaction);
-  }
-
-  async sellerClaimBonus() {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.claimBonus().send({from: this.address});
-    console.log('Seller Claim Bonus');
-    return await this._send(res, transactionsDescriptions.sellerClaimBonusTransaction);
-  }
-
-  async sellerClaimMoreBonus(pid_) {
-    const moreBonusHelper = new (this._getWeb3().eth.Contract)(environment.moreBonusHelperAbi, environment.moreBonusHelperAddress);
-    const res = moreBonusHelper.methods.claim(pid_).send({from: this.address});
-    console.log('Seller Claim More Bonus');
-    return await this._send(res, transactionsDescriptions.sellerClaimMoreBonusTransaction);
-  }
-
-  async guarantorClaimBonus() {
-    const guarantor = new (this._getWeb3().eth.Contract)(environment.guarantorAbi, environment.guarantorAddress);
-    const res = guarantor.methods.claimBonus().send({from: this.address});
-    console.log('Guarantor Claim Bonus');
-    return await this._send(res, transactionsDescriptions.guarantorClaimBonusTransaction);
-  }
-
-  async sellerClaimPremium() {
-    const seller = new (this._getWeb3().eth.Contract)(environment.sellerAbi, environment.sellerAddress);
-    const res = seller.methods.claimPremium().send({from: this.address});
-    console.log('Seller Claim Premium');
-    return await this._send(res, transactionsDescriptions.sellerClaimPremiumTransaction);
-  }
-
-  async guarantorClaimPremium() {
-    const guarantor = new (this._getWeb3().eth.Contract)(environment.guarantorAbi, environment.guarantorAddress);
-    const res = guarantor.methods.claimPremium().send({from: this.address});
-    console.log('Guarantor Claim Premium');
-    return await this._send(res, transactionsDescriptions.guarantorClaimPremiumTransaction);
-  }
-
-  async getStakingPendingReward() {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    const value = await staking.methods.pendingReward(this.address).call();
-    return +(this.getFixedTwoStr((+value) / (10 ** environment.tidalDecimals)));
-  }
-
-  async stakingClaim() {
-    const staking = new (this._getWeb3().eth.Contract)(environment.stakingAbi, environment.stakingAddress);
-    const res = staking.methods.claim().send({from: this.address});
-    console.log('Staking Claim');
-    return await this._send(res, transactionsDescriptions.stakingClaimTransaction);
-  }
-
-  async stakingDeposit(amount: number) {
-    const staking = new (this._getWeb3().eth.Contract)(environment.stakingAbi, environment.stakingAddress);
-    const res = staking.methods.deposit(this._decToHex(amount, environment.tidalDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.stakingDepositTransaction);
-  }
-
-  async stakingWithdraw(amount: number) {
-    const staking = new (this._getWeb3().eth.Contract)(environment.stakingAbi, environment.stakingAddress);
-    const res = staking.methods.withdraw(this._decToHex(amount, environment.tidalDecimals)).send({from: this.address});
-    return await this._send(res, transactionsDescriptions.stakingWithdrawTransaction);
-  }
-
-  async getOneStakingWithdrawRequest(who, index) {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    return await staking.methods.withdrawRequestMap(who, index).call();
-  }
-
-  async getMyStakingWithdrawRequests(from, to) {
-    const res = [];
-    let all = [];
-    let i = 0;
-    for (let index = from; index < to; ++index) {
-      all.push((async (index, i) => {
-        const entry = await this.getOneStakingWithdrawRequest(this.address, index);
-        res[i] = entry;
-      }) (index, i));
-
-      ++i;
-
-      if (all.length > 5) {
-        await Promise.all(all);
-        all = [];
-      }
-    }
-
-    if (all.length > 0) {
-      await Promise.all(all);
-    }
-
-    return res;
-  }
-
-  async getStakingApr() {
-    const stakingHelper = new this.web3.eth.Contract(environment.stakingHelperAbi, environment.stakingHelperAddress);
-    try {
-      return await stakingHelper.methods.getStakingAPR().call();
-    } catch(e) {
-      return 0;
     }
   }
 
@@ -558,42 +314,6 @@ export class ContractService {
         }
       ]
     });
-  }
-
-  async getStakingPoolInfo() {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    return await staking.methods.poolInfo().call();
-  }
-
-  async getStakingUserInfo(who_) {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    return await staking.methods.userInfo(who_).call();
-  }
-
-  async getWithdrawRequestBackwards(who, offset, limit) {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    return await staking.methods.getWithdrawRequestBackwards(who, offset, limit).call();
-  }
-
-  async getNow() {
-    const staking = new this.web3.eth.Contract(environment.stakingAbi, environment.stakingAddress);
-    return await staking.methods.getNow().call();
-  }
-
-  async requestPayoutStart(assetIndex: number) {
-    const committee = new (this._getWeb3().eth.Contract)(environment.committeeAbi, environment.committeeAddress);
-    const res = committee.methods.requestPayoutStart(assetIndex).send({from: this.address});
-    return await this._send(res, {});
-  }
-
-  async buyerAssetIndexPlusOne(who) {
-    const buyer = new this.web3.eth.Contract(environment.buyerAbi, environment.buyerAddress);
-    return +(await buyer.methods.buyerAssetIndexPlusOne(who).call());
-  }
-
-  async moreBonusUserInfo(pid_, who_) {
-    const moreBonusHelper = new this.web3.eth.Contract(environment.moreBonusHelperAbi, environment.moreBonusHelperAddress);
-    return await moreBonusHelper.methods.userInfo(pid_, who_).call();
   }
 
   async approve(tokenAddress, spender, accountAddress=this.address) {

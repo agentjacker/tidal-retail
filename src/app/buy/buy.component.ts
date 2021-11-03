@@ -14,15 +14,22 @@ export class BuyComponent implements OnInit {
 
   @Output() onGoTo: EventEmitter<any> = new EventEmitter();
 
-  allAssets: any = [];
-  subscribeType: string = "";
+  asset: any = {};
   predepositBalance: string = "";
-  weeksBeCovered: string = "";
-  sumOfPremium: number = 0;
-  assetSymbol: string = "";
+  premiumRate: string = "";
+  effectiveCapacity: string = "";
+  myCurrentCoverage: string = "";
+  myFutureCoverage: string = "";
+  myCurrentPremium: string = "";
+  myFuturePremium: string = "";
 
-  currentWeek: number = 0;
-  userBuyerInfo: any = {};
+  loading = false;
+
+  tabIndex = 0;
+
+  assetIndex = environment.assetIndex;
+  assetSymbol = environment.assetSymbol;
+
   filteredBuyerHistory = [{
     date: '10/21/2021',
     subscription: '$100,100',
@@ -46,25 +53,11 @@ export class BuyComponent implements OnInit {
   willShowDeposit: boolean = false;
   willShowWithdraw: boolean = false;
   willShowSubscribe: boolean = false;
-  willShowAdjust: boolean = false;
   willShowUnsubscribe: boolean = false;
-
-  selectedAssetIndex: number = 0;
-  seletedPremiumRate: number = 0;
-
-  hasAsset = false;
-  assetIndex = -1;
-
-  approving = false;
-  needApproval = true;
-
-  willShowFileAClaim: boolean = false;
 
   alertTitle: string = "";
   alertBody: string = "";
   willShowAlertMessage: boolean = false;
-  myCurrentPremium: number = 0;
-  AdjustType: string;
 
   constructor(private contractService: ContractService, private apiService: ApiService) { }
 
@@ -73,110 +66,43 @@ export class BuyComponent implements OnInit {
   }
 
   async load() {
-    let assetIndexPlusOne = 0;
-    if (this.contractService.address) {
-      assetIndexPlusOne = await this.contractService.buyerAssetIndexPlusOne(this.contractService.address);
+    if (!this.contractService.address) {
+      return;
     }
 
-    this.hasAsset = assetIndexPlusOne > 0;
-    this.assetIndex = assetIndexPlusOne - 1;
+    let userInfo;
+    let assetInfo;
+    let userSubscription;
 
-    const all0 = [(async () => {
-      const data = await this.apiService.getAllAssets();
-      this.allAssets = data.map(asset => {
-        return {
-          name: asset.name,
-          index: asset.index,
-          _premiumRate: asset.premiumRate,
-          premiumRate: this.formatRate(asset.premiumRate),
-          sellerBalance: this.formatBalance(asset.sellerBalance),
-          currentSubscription: this.formatBalance(asset.currentSubscription),
-          loading: true,
-          assetSymbol: asset.symbol
-        };
-      });
-      let temp = this.allAssets;
-      this.allAssets = [];
-      this.allAssets.push(temp[0])
+    const all = [(async () => {
+      userInfo = await this.contractService.getUserInfo(this.contractService.address);
     })(), (async () => {
-      if (this.contractService.address && this.hasAsset) {
-        this.predepositBalance = await this.contractService.getPredepositBalance(
-            this.contractService.address);
-      };
+      assetInfo = await this.contractService.getAssetInfo();
     })(), (async () => {
-      if (this.contractService.address && this.hasAsset) {
-        this.currentWeek = await this.contractService.getCurrentWeek();
-      }
+      userSubscription = await this.contractService.getSubscriptionByUser(this.contractService.address);
     })(), (async () => {
-      if (this.contractService.address && this.hasAsset) {
-        this.userBuyerInfo = await this.contractService.getUserBuyerInfo(this.contractService.address);
-      }
+      this.premiumRate = await this.contractService.getPremiumRate(this.contractService.address);
     })(), (async () => {
-      if (this.contractService.address) {
-        this.approving = true;
-        const allowance = await this.contractService.getAllowance(
-            environment.usdcAddress,
-            this.contractService.address,
-            environment.committeeAddress,
-            environment.usdcDecimals);
-        this.needApproval = parseFloat(allowance) < 1e9;
-        this.approving = false;
-      }
-    })(), (async () => {
-      if (this.contractService.address && this.hasAsset) {
-        let data = await this.apiService.getBuyerHistory();
-        data = data.filter(r => r.who.toLowerCase() == this.contractService.address.toLowerCase());
-        this.filteredBuyerHistory = data.map(r => {
-          return {
-            date: this.formatDate(r.blockTime),
-            subscription: this.formatBalance(r.currentSubscription / (10 ** environment.usdcDecimals)),
-            premium: this.formatBalance((r.paid) / (10 ** environment.usdcDecimals)),
-            balance: this.formatBalance(r.balance / (10 ** environment.usdcDecimals)),
-            refund: this.formatBalance(r.premiumToRefund / (10 ** environment.usdcDecimals)),
-            assetBalance: this.formatBalance(r.assetBalance / (10 ** environment.usdcDecimals)),
-          };
-        });
-        this.filteredBuyerHistory.push({
-          date: '10/21/2021',
-          subscription: '$100,100',
-          premium: '$3423',
-          assetBalance: '$324',
-          refund: '$1000'
-        })
-        this.filteredBuyerHistory = this.filteredBuyerHistory.reverse();
-      }
+      this.effectiveCapacity = await this.contractService.getEffectiveCapacity();
     })()];
 
-    await Promise.all(all0);
+    this.loading = false;
+    await Promise.all(all);
+    this.loading = true;
 
-    if (this.contractService.address && this.hasAsset) {
-      this.sumOfPremium = 0;
-
-      const all1 = this.allAssets.map(async (asset, index) => {
-        await Promise.all([(async () => {
-          const currentCoveredAmount = await this.contractService.getCurrentSubscription(
-              asset.index);
-          this.allAssets[index].myCurrentCoveredAmount = this.formatBalance(currentCoveredAmount);
-          const myCurrentPremium = parseFloat(currentCoveredAmount) * asset._premiumRate / 1e6;
-          this.allAssets[index].myCurrentPremium = myCurrentPremium;
-          if (this.assetIndex === asset.index) {
-            this.myCurrentPremium = asset.myCurrentPremium
-          }
-          this.sumOfPremium += myCurrentPremium;
-        })(), (async () => {
-          const futureCoveredAmount = await this.contractService.getFutureSubscription(
-              asset.index);
-          this.allAssets[index].myFutureCoveredAmount = this.formatBalance(futureCoveredAmount);
-          const myFuturePremium = parseFloat(futureCoveredAmount) * asset._premiumRate / 1e6;
-          this.allAssets[index].myFuturePremium = myFuturePremium;
-        })()]);
-        this.allAssets[index].loading = false;
-      });
-
-      await Promise.all(all1);
-
-      this.weeksBeCovered = this.myCurrentPremium ? Math.floor(parseFloat(this.predepositBalance) / this.myCurrentPremium).toString() : "0";
+    if (this.tabIndex == 0) {
+      this.predepositBalance = userInfo[0];
+      this.myCurrentCoverage = userSubscription[0];
+      this.myFutureCoverage = userSubscription[2];
+      this.myCurrentPremium = (+userInfo[2]).toFixed(2);
+    } else {
+      this.predepositBalance = userInfo[1];
+      this.myCurrentCoverage = userSubscription[1];
+      this.myFutureCoverage = userSubscription[3];
+      this.myCurrentPremium = (+userInfo[3]).toFixed(2);
     }
+
+    this.myFuturePremium = ((+this.myFutureCoverage) * (+this.premiumRate) / 1e6).toFixed(2);
   }
 
   refresh() {
@@ -188,7 +114,7 @@ export class BuyComponent implements OnInit {
     return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  formatUSDCBalance(value) {
+  formatTokenBalance(value) {
     const result = (+value).toFixed(0);
     return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
@@ -206,8 +132,8 @@ export class BuyComponent implements OnInit {
     return (value / 10000).toFixed(2) + '%';
   }
 
-  goToPortfolio() {
-    this.onGoTo.emit({key: 'portfolio'});
+  getNumber(value) {
+    return parseFloat(value);
   }
 
   showDeposit() {
@@ -236,35 +162,18 @@ export class BuyComponent implements OnInit {
     this.willShowWithdraw = false;
   }
 
-  showAdjust(type: string) {
-    if (!this.contractService.address) {
-      this.showAlert("Please connect to MetaMask", "");
-      return;
-    }
-
-    this.willShowAdjust = true;
-    this.AdjustType = type;
-  }
-
-  showSubscribe(assetIndex: number, type: string) {
+  showSubscribe(assetIndex: number) {
     if (!this.contractService.address) {
       this.showAlert("Please connect to MetaMask", "");
       return;
     }
 
     this.willShowSubscribe = true;
-    this.selectedAssetIndex = assetIndex;
-    this.seletedPremiumRate = this.allAssets[assetIndex]._premiumRate;
-    this.subscribeType = type;
-    this.assetSymbol = this.allAssets[assetIndex].assetSymbol;
+    this.assetSymbol = this.asset.assetSymbol;
   }
 
   closeSubscribe() {
     this.willShowSubscribe = false;
-  }
-
-  closeAdjust() {
-    this.willShowAdjust = false;
   }
 
   showUnsubscribe(assetIndex: number) {
@@ -274,42 +183,11 @@ export class BuyComponent implements OnInit {
     }
 
     this.willShowUnsubscribe = true;
-    this.selectedAssetIndex = assetIndex;
-    this.seletedPremiumRate = this.allAssets[assetIndex]._premiumRate;
-    this.assetSymbol = this.allAssets[assetIndex].assetSymbol;
+    this.assetSymbol = this.asset.assetSymbol;
   }
 
   closeUnsubscribe() {
     this.willShowUnsubscribe = false;
-  }
-
-  async approve() {
-    if (!this.contractService.address) {
-      this.showAlert("Please connect to MetaMask", "");
-      return;
-    }
-
-    this.approving = true;
-    try {
-      await this.contractService.approveTokenWithBiconomy(environment.usdcAddress, environment.committeeAddress);
-      this.needApproval = false;
-    } catch(e) {
-    }
-
-    this.approving = false;
-  }
-
-  showFileAClaim() {
-    if (!this.contractService.address) {
-      this.showAlert("Please connect to MetaMask", "");
-      return;
-    }
-
-    this.willShowFileAClaim = true;
-  }
-
-  closeFileAClaim() {
-    this.willShowFileAClaim = false;
   }
 
   showAlert(title, body) {
@@ -322,16 +200,11 @@ export class BuyComponent implements OnInit {
     this.willShowAlertMessage = false;
   }
 
-  toggleTab($event, type) {
-    console.log($event.target.tagName, type)
-    Array.from(document.querySelectorAll<HTMLElement>('.tab-content')).forEach(tabContent => {
-      tabContent.style.display = 'none'
-    })
-    Array.from(document.querySelectorAll<HTMLElement>('#toggleTabBar div')).forEach(tab => {
-      tab.classList.remove('tab-active')
-    })
-    document.querySelector(type).style.display = 'block'
-    let tab = $event.target.tagName == 'P' ?  $event.target.parentNode : $event.target;
-    tab.classList.add('tab-active')
+  showUSDCTab() {
+    this.tabIndex = 0;
+  }
+
+  showAssetTab() {
+    this.tabIndex = 1;
   }
 }

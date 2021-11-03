@@ -16,7 +16,10 @@
       <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">My Pre-deposit Balance:</p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
-      <p style=" margin-top: 0px; color: #002f9b; float: left;">{{ getNumber(predepositBalance).toFixed(2) }} USDC</p>
+      <p style=" margin-top: 0px; color: #002f9b; float: left;">{{ getNumber(predepositBalance).toFixed(2) }}
+        <span *ngIf="tabIndex==0">USDC</span>
+        <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
+      </p>
     </div>
     <div style="width: 100%; display: inline-block;">
       <p style="color: #002f9b; margin-top: 8px; float: left">Amount to Deposit:</p>
@@ -26,10 +29,13 @@
         <a href="javascript: void(0)" (click)="max()">Max</a>
     </div>
     <button class="pbutton" *ngIf="needApproval" [ngStyle]="{'background-color': loading? 'grey': '#002f9b'}" (click)="approve()" [disabled]="loading" >Approve <span class="icon-spinner" *ngIf="loading"></span></button>
-    <button class="pbutton" *ngIf="!needApproval" [ngStyle]="{'background-color': willDisableButton() ? 'grey': '#002f9b'}" (click)="deposit()" [disabled]="willDisableButton()" >{{ getNumber(amount) > getNumber(usdcBalance)? 'Insufficient Fund' : 'Deposit' }} <span class="icon-spinner" *ngIf="loading"></span></button>
+    <button class="pbutton" *ngIf="!needApproval" [ngStyle]="{'background-color': willDisableButton() ? 'grey': '#002f9b'}" (click)="deposit()" [disabled]="willDisableButton()" >{{ getNumber(amount) > getNumber(tokenBalance)? 'Insufficient Fund' : 'Deposit' }} <span class="icon-spinner" *ngIf="loading"></span></button>
     <div style="width: 100%; display: inline-block; margin-top: 16px;" >
       <p class="title" style="float: left; font-size: 13px;">My Wallet Balance:</p>
-      <p class="number" style="float: right; font-size: 13px;">{{ usdcBalance }} USDC</p>
+      <p class="number" style="float: right; font-size: 13px;">{{ tokenBalance }}
+        <span *ngIf="tabIndex==0">USDC</span>
+        <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
+      </p>
     </div>
   </div>
 </div>

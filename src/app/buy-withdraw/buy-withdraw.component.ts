@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ContractService } from '../contract.service';
 import { ApiService } from '../api.service';
@@ -10,6 +10,7 @@ import { ApiService } from '../api.service';
 })
 export class BuyWithdrawComponent implements OnInit {
 
+  @Input() tabIndex: number;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
@@ -31,8 +32,12 @@ export class BuyWithdrawComponent implements OnInit {
     if (this.contractService.address && this.contractService.usdcBalance) {
       this.usdcBalance = this.contractService.usdcBalance;
 
-      this.predepositBalance = await this.contractService.getPredepositBalance(
-          this.contractService.address);
+      const userInfo = await this.contractService.getUserInfo(this.contractService.address);
+      if (this.tabIndex == 0) {
+        this.predepositBalance = userInfo[0];
+      } else {
+        this.predepositBalance = userInfo[1];
+      }
     }
   }
 
@@ -47,7 +52,7 @@ export class BuyWithdrawComponent implements OnInit {
   async withdraw() {
     this.loading = true;
     try {
-      await this.contractService.buyerWithdraw(+this.amount);
+      await this.contractService.withdraw(+this.amount, this.tabIndex==0);
       await this.load();
     } catch(e) {
     }

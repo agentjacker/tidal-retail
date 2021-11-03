@@ -12,12 +12,12 @@ import { environment } from '../../environments/environment';
 })
 export class BuyDepositComponent implements OnInit {
 
-  @Input() premiumSum: number;
+  @Input() tabIndex: number;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
   amount: string = "";
-  usdcBalance: string = "";
+  tokenBalance: string = "";
   predepositBalance: string = "";
 
   needApproval: boolean = true;
@@ -32,15 +32,39 @@ export class BuyDepositComponent implements OnInit {
   }
 
   async load() {
-    if (this.contractService.address && this.contractService.usdcBalance) {
-      this.usdcBalance = this.contractService.usdcBalance;
-
+    if (this.contractService.address) {
       const all = [(async ()=> {
-        const allowance = await this.contractService.getAllowance(environment.usdcAddress, this.contractService.address, environment.buyerAddress, environment.usdcDecimals);
-        this.needApproval = parseFloat(allowance) < parseFloat(this.usdcBalance);
+        if (this.tabIndex == 0) {
+          this.tokenBalance = await this.contractService.balanceOf(
+              environment.usdcAddress, this.contractService.address, environment.usdcDecimals);
+        } else {
+          this.tokenBalance = await this.contractService.balanceOf(
+              environment.assetTokenAddress, this.contractService.address, environment.assetDecimals);
+        }
       })(), (async ()=> {
-        this.predepositBalance = await this.contractService.getPredepositBalance(
-            this.contractService.address);
+        let allowance;
+        if (this.tabIndex == 0) {
+          allowance = await this.contractService.getAllowance(
+              environment.assetTokenAddress,
+              this.contractService.address,
+              environment.retailHelperAddress,
+              environment.assetDecimals);
+        } else {
+          allowance = await this.contractService.getAllowance(
+              environment.usdcAddress,
+              this.contractService.address,
+              environment.retailHelperAddress,
+              environment.usdcDecimals);
+        }
+
+        this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
+      })(), (async ()=> {
+        const userInfo = await this.contractService.getUserInfo(this.contractService.address);
+        if (this.tabIndex == 0) {
+          this.predepositBalance = userInfo[0];
+        } else {
+          this.predepositBalance = userInfo[1];
+        }
       })()];
 
       await Promise.all(all);
@@ -48,7 +72,7 @@ export class BuyDepositComponent implements OnInit {
   }
 
   max() {
-    this.amount = this.usdcBalance;
+    this.amount = this.tokenBalance;
   }
 
   getNumber(x) {
@@ -65,7 +89,14 @@ export class BuyDepositComponent implements OnInit {
   async approve() {
     this.loading = true;
     try {
-      await this.contractService.approveTokenWithBiconomy(environment.usdcAddress, environment.buyerAddress);
+      if (this.tabIndex == 0) {
+        await this.contractService.approveTokenWithBiconomy(
+            environment.usdcAddress, environment.retailHelperAddress);
+      } else {
+        await this.contractService.approve(
+            environment.assetTokenAddress, environment.retailHelperAddress);
+      }
+
       this.needApproval = false;
     } catch(e) {
     }
@@ -76,7 +107,7 @@ export class BuyDepositComponent implements OnInit {
   async deposit() {
     this.loading = true;
     try {
-      await this.contractService.buyerDeposit(+this.amount);
+      await this.contractService.deposit(+this.amount, this.tabIndex==0);
       await this.load();
       this.amount = "";
     } catch(e) {
@@ -87,7 +118,7 @@ export class BuyDepositComponent implements OnInit {
 
   willDisableButton() {
     const buttonDisabled = (this.loading || !this.amount ||
-      !this.getNumber(this.amount) || this.getNumber(this.amount) > this.getNumber(this.usdcBalance));
+      !this.getNumber(this.amount) || this.getNumber(this.amount) > this.getNumber(this.tokenBalance));
     return buttonDisabled;
   }
 

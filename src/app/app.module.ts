@@ -17,8 +17,6 @@ import { BuyUnsubscribeComponent } from './buy-unsubscribe/buy-unsubscribe.compo
 import { NotificationMessageComponent } from './notification-message/notification-message.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsComponent } from './settings/settings.component';
-import { BuyAdjustcoverageComponent } from './buy-adjustcoverage/buy-adjustcoverage.component';
-import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 import { PaginatorComponent } from './paginator/paginator.component';
 
 @NgModule({
@@ -36,8 +34,6 @@ import { PaginatorComponent } from './paginator/paginator.component';
     BuyUnsubscribeComponent,
     NotificationMessageComponent,
     SettingsComponent,
-    FileAClaimComponent,
-    BuyAdjustcoverageComponent,
     PaginatorComponent,
   ],
   imports: [

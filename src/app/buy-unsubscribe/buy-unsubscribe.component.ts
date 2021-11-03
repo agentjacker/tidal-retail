@@ -3,6 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ContractService } from '../contract.service';
 import { ApiService } from '../api.service';
 
+import { environment } from '../../environments/environment';
+
 @Component({
   selector: 'app-buy-unsubscribe',
   templateUrl: './buy-unsubscribe.component.html',
@@ -10,9 +12,8 @@ import { ApiService } from '../api.service';
 })
 export class BuyUnsubscribeComponent implements OnInit {
 
-  @Input() assetIndex: number;
+  @Input() tabIndex: number;
   @Input() premiumRate: number;
-  @Input() assetSymbol: string;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
@@ -22,6 +23,9 @@ export class BuyUnsubscribeComponent implements OnInit {
   currentSubscription: string = "";
   futureSubscription: string = "";
   premiumAmount: string = "";
+
+  assetIndex = environment.assetIndex;
+  assetSymbol = environment.assetSymbol;
 
   loading: boolean = false;
 
@@ -34,19 +38,30 @@ export class BuyUnsubscribeComponent implements OnInit {
   }
 
   async load() {
+    let userInfo;
+    let userSubscription;
+
     const all = [(async () => {
-      this.predepositBalance = await this.contractService.getPredepositBalance(
-          this.contractService.address);
-    })(), (async () => {
-      this.currentSubscription = await this.contractService.getCurrentSubscription(
-          this.assetIndex);
-    })(), (async () => {
-      this.futureSubscription = await this.contractService.getFutureSubscription(
-          this.assetIndex);
+      userInfo = await this.contractService.getUserInfo(this.contractService.address);
+    })(), (async () => { 
+      userSubscription = await this.contractService.getSubscriptionByUser(this.contractService.address);
     })()];
 
+    this.loading = false;
     await Promise.all(all);
-    this.premiumAmount = (this.premiumRate * parseFloat(this.futureSubscription) / 1e6).toFixed(2);
+    this.loading = true;
+
+    if (this.tabIndex == 0) {
+      this.predepositBalance = userInfo[0];
+      this.currentSubscription = userSubscription[0];
+      this.futureSubscription = userSubscription[2];
+      this.premiumAmount = userInfo[2];
+    } else {
+      this.predepositBalance = userInfo[1];
+      this.currentSubscription = userSubscription[1];
+      this.futureSubscription = userSubscription[3];
+      this.premiumAmount = userInfo[2];
+    }
   }
 
   max() {
@@ -60,7 +75,7 @@ export class BuyUnsubscribeComponent implements OnInit {
   async unsubscribe() {
     this.loading = true;
     try {
-      await this.contractService.buyerUnsubscribe(this.assetIndex, +this.amount);
+      await this.contractService.unsubscribe(+this.amount, this.tabIndex==0);
       await this.load();
     } catch(e) {
     }

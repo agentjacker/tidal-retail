@@ -4,19 +4,21 @@
     <p class="des font-16-blue">for protocol</p>
   </div>
 </div>
-<div id="toggleTabBar" class="margin-12-per">
-  <div (click)="toggleTab($event, '#overviewBox')" id="overview" class="flex-center-item tab-active"><p >Pay with POND</p></div>
-  <div (click)="toggleTab($event, '#usersettingBox')" id="usersetting" class="flex-center-item"><p>Pay with USDC</p></div>
+
+<div class="margin-12-per" id="toggleTabBar">
+  <div (click)="showUSDCTab()" class="flex-center-item" [ngClass]="{'tab-active': tabIndex==0}"><p>Pay with USDC</p></div>
+  <div (click)="showAssetTab()" class="flex-center-item" [ngClass]="{'tab-active': tabIndex==1}"><p>Pay with POND</p></div>
 </div>
 
-<div id="overviewBox" class="tab-content margin-12-per">
+<div class="tab-content margin-12-per">
 <div class="row pre-deposit " *ngIf="true" id="buyBox">
   <div class="box-wrap" style="display: flex;gap: 28px;background-color: unset;">
     <div class="column-8 number-box">
       <div class="column-4" style="padding-left: 34px;padding-top: 30px;">
-        <p class="title" style="margin: 0;display: flex;">My Predeposit Balance<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-        <p class="number font-36-blue" style="margin-top: 12px;">{{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue">USDC</span>
-          <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
+        <p class="title" style="margin: 0;display: flex;">My Predeposit Balance<img src="/assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
+        <p class="number font-36-blue" style="margin-top: 12px;">{{ formatTokenBalance(predepositBalance) }}
+          <span class="font-18-blue" *ngIf="tabIndex==0">USDC</span>
+          <span class="font-18-blue" *ngIf="tabIndex==1">{{assetSymbol}}</span>
         </p>
       </div>
       <div class="column-4 padding-top-60" style="border-width: 0">
@@ -24,7 +26,7 @@
       </div>
       <div class="column-3 padding-top-60" style="border-width: 0">
         <a href="javascript:void(0)" (click)="showWithdraw()" class="button">Withdraw</a>
-    </div>
+      </div>
     </div>
     <div class="column-4 number-box" style="display: flex;
     justify-content: center;align-items: center;">
@@ -39,59 +41,58 @@
 
 <div class="crypto-list row  " style="padding-top: 27px;">
   <div class="crypto-list-box">
-  <ng-container  *ngFor="let asset of allAssets">
-    <div class="crypto-list-item protocol-box"
-    *ngIf="!hasAsset || (hasAsset&& assetIndex == asset.index)">
+    <div class="crypto-list-item protocol-box">
       <div class="guarantor-number guarantor-number-1">
-        <span>Premium Fee (weekly)</span>
-        <span class="number" style="font-size:16px">{{asset.premiumRate}}
+        <span>Premium Rate (weekly)</span>
+        <span class="number" style="font-size:16px">{{formatRate(premiumRate)}}
         </span>
       </div>
       <div class="guarantor-number guarantor-number-2">
-        <span>USDC Reserve</span>
-        <span class="number">{{asset.sellerBalance}}</span>
+        <span>Coverage for Sale</span>
+        <span class="number">{{formatTokenBalance(effectiveCapacity)}}</span>
       </div>
       <div class="guarantor-number guarantor-number-3">
         <span>My Covered TVL</span>
         <span class="number">
-          <span class="icon-spinner" *ngIf="asset.loading"></span>
-        <span class="number" [ngClass]="{'-inactive': userBuyerInfo.weekEnd < currentWeek}"
-            *ngIf="!asset.loading&&asset.myCurrentCoveredAmount==asset.myFutureCoveredAmount">{{ asset.myCurrentCoveredAmount }}
+        <span class="icon-spinner" *ngIf="loading"></span>
+          <span class="number"
+              *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">{{ myCurrentCoverage }}
+          </span>
+          <span class="number"
+              *ngIf="!loading&&myCurrentCoverage!=myFutureCoverage">{{ myCurrentCoverage }} (this week) <br/>
+            {{ myFutureCoverage }} (next week)
+          </span>
         </span>
-        <span class="number" [ngClass]="{'-inactive': userBuyerInfo.weekEnd < currentWeek}"
-            *ngIf="!asset.loading&&asset.myCurrentCoveredAmount!=asset.myFutureCoveredAmount">{{ asset.myCurrentCoveredAmount }} (this week) <br/>
-          {{ asset.myFutureCoveredAmount }} (next week)
-        </span></span>
       </div>
       <div class="guarantor-number guarantor-number-2">
         <span>My Cover Cost (weekly)</span>
         <span class="number">
-          <span class="icon-spinner" *ngIf="asset.loading"></span>
-          <ng-container *ngIf="userBuyerInfo.weekEnd >= currentWeek">
-            <span class="number" *ngIf="!asset.loading&&asset.myCurrentPremium==asset.myFuturePremium">{{ formatBalance(asset.myCurrentPremium) }}</span>
-            <span class="number" *ngIf="!asset.loading&&asset.myCurrentPremium!=asset.myFuturePremium">{{ formatBalance(asset.myCurrentPremium) }} (this week) <br/>
-              {{ formatBalance(asset.myFuturePremium) }} (next week)
+          <span class="icon-spinner" *ngIf="loading"></span>
+          <ng-container *ngIf="getNumber(myCurrentCoverage) > 0">
+            <span class="number" *ngIf="loading&&myCurrentPremium==myFuturePremium">{{ formatBalance(myCurrentPremium) }}</span>
+            <span class="number" *ngIf="loading&&myCurrentPremium!=myFuturePremium">{{ formatBalance(myCurrentPremium) }} (this week) <br/>
+              {{ formatBalance(myFuturePremium) }} (next week)
             </span>
           </ng-container>
-          <ng-container *ngIf="userBuyerInfo.weekEnd < currentWeek">
-            <span class="-suspended">Suspended</span>
+          <ng-container *ngIf="getNumber(myCurrentCoverage)==0">
+            <span class="-suspended">Not Covered</span>
           </ng-container>
         </span>
       </div>
       <div class="guarantor-operation">
-        <span (click)="showSubscribe(asset.index, 'increase')">
+        <span (click)="showSubscribe(assetIndex)">
           <img src="/assets/images/asset-Increase.svg">
         </span>
-          <span (click)="showUnsubscribe(asset.index)">
-            <img src="/assets/images/asset-decrease.svg">
-          </span>
+        <span (click)="showUnsubscribe(assetIndex)">
+          <img src="/assets/images/asset-decrease.svg">
+        </span>
       </div>
     </div>
-  </ng-container>
-</div>
+  </div>
 </div>
 
-<div class="crypto-list row  ">
+<div class="crypto-list row">
+  <h2 class="title">My Purchase History</h2>
   <div class="crypto-list-box" id="paymentBox">
     <table class="crypto-list-tab" style="width: 100%">
       <tr class="crypto-list-title">
@@ -113,87 +114,17 @@
     </table>
   </div>
 </div>
+
 <div class="crypto-list row">
   <app-paginator></app-paginator>
 </div>
-
-</div>
-<!-- user purchase settting tab content-->
-<div id="usersettingBox" class="tab-content margin-12-per" style="display: none;">
-  <div class="row pre-deposit " *ngIf="true" id="buyBox">
-    <div class="box-wrap mobile-flex-column" style="display: flex;gap: 28px;background-color: unset;">
-      <div class="box-wrap" style="display: flex;gap: 28px;background-color: unset;">
-        <div class="column-8 number-box">
-          <div class="column-4" style="padding-left: 34px;padding-top: 30px;">
-            <p class="title" style="margin: 0;display: flex;">My Predeposit Balance<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-            <p class="number font-36-blue" style="margin-top: 12px;">{{ formatUSDCBalance(predepositBalance) }} <span class="font-18-blue">USDC</span>
-              <!-- <span class="-suspended" *ngIf="userBuyerInfo.weekEnd < currentWeek">(suspended)</span> -->
-            </p>
-          </div>
-          <div class="column-4 padding-top-60" style="border-width: 0">
-              <a href="javascript:void(0)" (click)="showDeposit()" class="button">Deposit</a>
-          </div>
-          <div class="column-3 padding-top-60" style="border-width: 0">
-            <a href="javascript:void(0)" (click)="showWithdraw()" class="button">Withdraw</a>
-        </div>
-        </div>
-        <div class="column-4 number-box" style="display: flex;
-        justify-content: center;align-items: center;">
-          <div id="coverageBox">
-            <p class="title" style="display: flex;">Estimate Coverage Period<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-            <p class="number" *ngIf="sumOfPremium">{{ weeksBeCovered }} Weeks</p>
-            <p *ngIf="!sumOfPremium">Not covered yet</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="left column-6  ">
-      <h2 class="title">User Purchase History</h2>
-    </div>
-
-  <div class="crypto-list row  ">
-    <div class="crypto-list-box" id="paymentBox">
-      <table class="crypto-list-tab" style="width: 100%">
-        <tr class="crypto-list-title">
-          <td><strong>Date</strong></td>
-          <td><strong>User Purchased Amount</strong></td>
-          <td><strong>User Paid Amount (USDC)</strong></td>
-          <td><strong>User Paid Amount (FIS)</strong></td>
-          <td><strong></strong></td>
-        </tr>
-        <ng-container  *ngFor="let record of filteredBuyerHistory">
-          <tr class="crypto-list-item">
-            <td><span class="number">{{ record.date }}</span></td>
-            <td><span class="number">{{ record.subscription }}</span></td>
-            <td><span class="number">{{ record.premium }}</span></td>
-            <td><span class="number">{{ record.assetBalance }}</span></td>
-            <td><span class="exportBox">
-              <img src="/assets/images/export.svg">
-              <span>Export
-              </span>
-            </span></td>
-          </tr>
-        </ng-container>
-      </table>
-    </div>
-  </div>
-
-  <app-paginator></app-paginator>
 </div>
 
-<!-- <app-file-a-claim
-  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
-  *ngIf="willShowFileAClaim"
-  (onClose)="closeFileAClaim()"
-  >
-</app-file-a-claim> -->
 
 <app-buy-deposit
   style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
   *ngIf="willShowDeposit"
-  [premiumSum]=sumOfPremium
+  [tabIndex]=tabIndex
   (onClose)="closeDeposit()"
   (onRefresh)="refresh()">
 </app-buy-deposit>
@@ -201,6 +132,7 @@
 <app-buy-withdraw
   style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
   *ngIf="willShowWithdraw"
+  [tabIndex]=tabIndex
   (onClose)="closeWithdraw()"
   (onRefresh)="refresh()">
 </app-buy-withdraw>
@@ -208,32 +140,17 @@
 <app-buy-subscribe
   style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
   *ngIf="willShowSubscribe"
-  [assetIndex]=selectedAssetIndex
-  [premiumRate]=seletedPremiumRate
-  [subscribeType]=subscribeType
-  [assetSymbol]=assetSymbol
+  [tabIndex]=tabIndex
+  [premiumRate]=premiumRate
   (onClose)="closeSubscribe()"
   (onRefresh)="refresh()">
 </app-buy-subscribe>
 
-
-<app-buy-adjustcoverage
-  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
-  *ngIf="willShowAdjust"
-  [premiumRate]=seletedPremiumRate
-  [AdjustType]=AdjustType
-  [assetSymbol]=assetSymbol
-  (onClose)="closeAdjust()"
-  (onRefresh)="refresh()">
-</app-buy-adjustcoverage>
-
-
 <app-buy-unsubscribe
   style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
   *ngIf="willShowUnsubscribe"
-  [assetIndex]=selectedAssetIndex
-  [premiumRate]=seletedPremiumRate
-  [assetSymbol]=assetSymbol
+  [tabIndex]=tabIndex
+  [premiumRate]=premiumRate
   (onClose)="closeUnsubscribe()"
   (onRefresh)="refresh()">
 </app-buy-unsubscribe>
