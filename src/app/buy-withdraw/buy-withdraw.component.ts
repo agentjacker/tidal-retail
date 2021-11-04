@@ -3,6 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ContractService } from '../contract.service';
 import { ApiService } from '../api.service';
 
+import { environment } from '../../environments/environment';
+
 @Component({
   selector: 'app-buy-withdraw',
   templateUrl: './buy-withdraw.component.html',
@@ -17,6 +19,9 @@ export class BuyWithdrawComponent implements OnInit {
   amount: string = "";
   usdcBalance: string = "";
   predepositBalance: string = "";
+
+  assetIndex = environment.assetIndex;
+  assetSymbol = environment.assetSymbol;
 
   loading: boolean = false;
 
@@ -56,6 +61,7 @@ export class BuyWithdrawComponent implements OnInit {
       await this.load();
     } catch(e) {
     }
+
     this.loading = false;
     this.onRefresh.emit();
   }

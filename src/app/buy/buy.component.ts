@@ -66,9 +66,7 @@ export class BuyComponent implements OnInit {
   }
 
   async load() {
-    if (!this.contractService.address) {
-      return;
-    }
+    await this.contractService.waitForConnection();
 
     let userInfo;
     let assetInfo;
@@ -86,9 +84,9 @@ export class BuyComponent implements OnInit {
       this.effectiveCapacity = await this.contractService.getEffectiveCapacity();
     })()];
 
-    this.loading = false;
-    await Promise.all(all);
     this.loading = true;
+    await Promise.all(all);
+    this.loading = false;
 
     if (this.tabIndex == 0) {
       this.predepositBalance = userInfo[0];
@@ -109,13 +107,13 @@ export class BuyComponent implements OnInit {
     this.load();
   }
 
-  formatBalance(value) {
-    const result = '$' + (+value).toFixed(0);
+  formatBalance(value, decimals=6) {
+    const result = '$' + ((+value) / (10 ** decimals)).toFixed(2);
     return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  formatTokenBalance(value) {
-    const result = (+value).toFixed(0);
+  formatTokenBalance(value, decimals=6) {
+    const result = ((+value) / (10 ** decimals)).toFixed(2);
     return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 

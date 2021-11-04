@@ -20,6 +20,9 @@ export class BuyDepositComponent implements OnInit {
   tokenBalance: string = "";
   predepositBalance: string = "";
 
+  assetIndex = environment.assetIndex;
+  assetSymbol = environment.assetSymbol;
+
   needApproval: boolean = true;
   loading: boolean = false;
 
@@ -90,7 +93,7 @@ export class BuyDepositComponent implements OnInit {
     this.loading = true;
     try {
       if (this.tabIndex == 0) {
-        await this.contractService.approveTokenWithBiconomy(
+        await this.contractService.approve(
             environment.usdcAddress, environment.retailHelperAddress);
       } else {
         await this.contractService.approve(

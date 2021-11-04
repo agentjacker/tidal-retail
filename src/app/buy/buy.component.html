@@ -49,12 +49,12 @@
       </div>
       <div class="guarantor-number guarantor-number-2">
         <span>Coverage for Sale</span>
-        <span class="number">{{formatTokenBalance(effectiveCapacity)}}</span>
+        <span class="number">{{formatBalance(effectiveCapacity)}}</span>
       </div>
       <div class="guarantor-number guarantor-number-3">
         <span>My Covered TVL</span>
         <span class="number">
-        <span class="icon-spinner" *ngIf="loading"></span>
+          <span class="icon-spinner" *ngIf="loading"></span>
           <span class="number"
               *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">{{ myCurrentCoverage }}
           </span>

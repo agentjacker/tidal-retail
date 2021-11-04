@@ -14,7 +14,6 @@ export class ContractService {
 
   public web3;
   public web3m;  // Metamask
-  public web3b;  // Biconomy
 
   constructor(private transactionsService: TransactionsService, private notifications: NotificationsService) {
   }
@@ -35,24 +34,18 @@ export class ContractService {
     return window['ethereum'] && window['ethereum'].isConnected();
   }
 
-  _waitForBiconomyReady(biconomy) {
-    return new Promise((resolve, reject) => {
-      biconomy.onEvent(biconomy.READY, () => {
-        // Initialize your dapp here like getting user accounts etc
-        resolve();
-      }).onEvent(biconomy.ERROR, (error, message) => {
-        // Handle error while initializing mexa
-        reject(error);
-      });
-    });
-  }
-
-  _willUseBiconomy() {
-    return parseInt(localStorage.getItem('willUseBiconomy')) || 0;
-  }
-
   _getWeb3(): any {
-    return this._willUseBiconomy() ? this.web3b : this.web3m;
+    return this.web3m;
+  }
+
+  async waitForConnection() {
+    while(1) {
+      if (this.address) {
+        break;
+      } else {
+        await this._wait(500);
+      }
+    }
   }
 
   async enable() {
@@ -62,16 +55,6 @@ export class ContractService {
     } catch(e) {
       return "";
     }
-
-    setTimeout(async () => {
-      const Biconomy = window['Biconomy'];
-      const biconomy = new Biconomy(window['ethereum'], {apiKey: environment.biconomyAPIKey, debug: true});
-      this.web3b = new window['Web3'](biconomy);
-      try {
-        await this._waitForBiconomyReady(biconomy);
-      } catch(e) {
-      }
-    }, 0);
 
     const provider = environment.web3EndPoint ?
         new window['Web3'].providers.HttpProvider(environment.web3EndPoint) :
@@ -126,7 +109,7 @@ export class ContractService {
   async getEffectiveCapacity() {
     const retailHelper = new this.web3.eth.Contract(
         environment.retailHelperAbi, environment.retailHelperAddress);
-    return await retailHelper.getEffectiveCapacity(environment.assetIndex).call();
+    return await retailHelper.methods.getEffectiveCapacity(environment.assetIndex).call();
   }
 
   _send(sendHandler, transaction) {
@@ -317,12 +300,6 @@ export class ContractService {
   }
 
   async approve(tokenAddress, spender, accountAddress=this.address) {
-    return this._willUseBiconomy() ?
-        await this.approveTokenWithBiconomy(tokenAddress, spender, accountAddress) :
-        await this.approveWithoutBiconomy(tokenAddress, spender, accountAddress);
-  }
-
-  async approveWithoutBiconomy(tokenAddress, spender, accountAddress=this.address) {
     const token = new (this.web3m.eth.Contract)(environment.erc20Abi, tokenAddress);
     let amount;
     if (tokenAddress.toLowerCase() == '0x34c1b299a74588d6abdc1b85a53345a48428a521') {
@@ -334,139 +311,6 @@ export class ContractService {
 
     const res = token.methods.approve(spender, amount).send({from: accountAddress});
     return await this._send(res, transactionsDescriptions.approveTransaction);
-  }
-
-  async approveTokenWithBiconomy(tokenAddress, spenderAddress, accountAddress=this.address) {
-    const sendTransaction = (
-      accountAddress,
-      functionData,
-      r,
-      s,
-      v,
-      contract
-    ) => {
-      return contract.methods
-          .executeMetaTransaction(accountAddress, functionData, r, s, v)
-          .send({ from: accountAddress, gasLimit: 1000000 }, (error, tHash) => {
-            if (error) {
-              console.log(
-                  `Error while sending executeMetaTransaction tx: ${error}`
-              );
-              return false;
-            }
-          });
-    };
-
-    const getSignatureParameters = (signature, web3b) => {
-      const r = signature.slice(0, 66);
-      const s = "0x".concat(signature.slice(66, 130));
-      let v = "0x".concat(signature.slice(130, 132));
-      let v2 = web3b.utils.hexToNumber(v);
-      if (![27, 28].includes(v2)) v2 += 27;
-      return {
-        r: r,
-        s: s,
-        v: v2,
-      };
-    };
-
-    const domainType = [
-      {
-        name: "name",
-        type: "string",
-      },
-      {
-        name: "version",
-        type: "string",
-      },
-      {
-        name: "verifyingContract",
-        type: "address",
-      },
-      {
-        name: "salt",
-        type: "bytes32",
-      },
-    ];
-
-    const metaTransactionType = [
-      { name: "nonce", type: "uint256" },
-      { name: "from", type: "address" },
-      { name: "functionSignature", type: "bytes" },
-    ];
-
-    const tokenName = (environment.networkName != "matic-mumbai") ?
-        (tokenAddress == environment.usdcAddress ? "USD Coin (PoS)" : "Tidal Token") :
-        (tokenAddress == environment.usdcAddress ? "MockUSDC" : "Tidal Token");
-
-    const domainData = {
-      name: tokenName,
-      version: "1",
-      verifyingContract: tokenAddress,
-      salt: "0x" + (environment.chainId).toString(16).padStart(64, "0"),
-    };
-
-    const contract = new (this.web3b.eth.Contract)(
-        tokenAddress == environment.usdcAddress ? environment.usdcAbi : environment.tidalAbi,
-        tokenAddress
-    );
-
-    let nonce =(environment.networkName != "matic-mumbai" && tokenAddress == environment.usdcAddress) ?
-        (await contract.methods.nonces(accountAddress).call()):
-        (await contract.methods.getNonce(accountAddress).call());
-
-    const functionSignature = await contract.methods
-      .approve(spenderAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-      .encodeABI();
-
-    const message = {
-      nonce: parseInt(nonce),
-      from: accountAddress,
-      functionSignature: functionSignature
-    }
-
-    const dataToSign = JSON.stringify({
-      types: {
-        EIP712Domain: domainType,
-        MetaTransaction: metaTransactionType,
-      },
-      domain: domainData,
-      primaryType: "MetaTransaction",
-      message: message,
-    });
-
-    const sendAndWait = () => {
-      return new Promise(async (resolve, reject) => {
-        await this.web3b.currentProvider.send(
-          {
-            jsonrpc: "2.0",
-            id: 999999999999,
-            method: "eth_signTypedData_v3",
-            params: [accountAddress, dataToSign],
-          },
-          async (error, response) => {
-            console.info(`User signature is ${response.result}`);
-            if (error || (response && response.error)) {
-              reject("Error while signing the signature");
-            } else if (response && response.result) {
-              const { r, s, v } = getSignatureParameters(response.result, this.web3b);
-              const res = sendTransaction(
-                accountAddress,
-                functionSignature,
-                r,
-                s,
-                v,
-                contract
-              );
-
-              resolve(await this._send(res, transactionsDescriptions.approveTransaction));
-            }
-          }
-        );
-      });
-    };
-
-    return await sendAndWait();
   }
 
   async init() {
