@@ -32,9 +32,7 @@ export class BuyUnsubscribeComponent implements OnInit {
   constructor(private contractService: ContractService, private apiService: ApiService) { }
 
   ngOnInit() {
-    this.loading = true;
     this.load();
-    this.loading = false;
   }
 
   async load() {
@@ -47,9 +45,9 @@ export class BuyUnsubscribeComponent implements OnInit {
       userSubscription = await this.contractService.getSubscriptionByUser(this.contractService.address);
     })()];
 
-    this.loading = false;
-    await Promise.all(all);
     this.loading = true;
+    await Promise.all(all);
+    this.loading = false;
 
     if (this.tabIndex == 0) {
       this.predepositBalance = userInfo[0];

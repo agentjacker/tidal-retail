@@ -29,49 +29,51 @@ export class BuyDepositComponent implements OnInit {
   constructor(private contractService: ContractService, private apiService: ApiService) { }
 
   ngOnInit() {
-    this.loading = true;
     this.load();
-    this.loading = false;
   }
 
   async load() {
-    if (this.contractService.address) {
-      const all = [(async ()=> {
-        if (this.tabIndex == 0) {
-          this.tokenBalance = await this.contractService.balanceOf(
-              environment.usdcAddress, this.contractService.address, environment.usdcDecimals);
-        } else {
-          this.tokenBalance = await this.contractService.balanceOf(
-              environment.assetTokenAddress, this.contractService.address, environment.assetDecimals);
-        }
-      })(), (async ()=> {
-        let allowance;
-        if (this.tabIndex == 0) {
-          allowance = await this.contractService.getAllowance(
-              environment.assetTokenAddress,
-              this.contractService.address,
-              environment.retailHelperAddress,
-              environment.assetDecimals);
-        } else {
-          allowance = await this.contractService.getAllowance(
-              environment.usdcAddress,
-              this.contractService.address,
-              environment.retailHelperAddress,
-              environment.usdcDecimals);
-        }
-
-        this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
-      })(), (async ()=> {
-        const userInfo = await this.contractService.getUserInfo(this.contractService.address);
-        if (this.tabIndex == 0) {
-          this.predepositBalance = userInfo[0];
-        } else {
-          this.predepositBalance = userInfo[1];
-        }
-      })()];
-
-      await Promise.all(all);
+    if (!this.contractService.address) {
+      return;
     }
+
+    const all = [(async ()=> {
+      if (this.tabIndex == 0) {
+        this.tokenBalance = await this.contractService.balanceOf(
+            environment.usdcAddress, this.contractService.address, environment.usdcDecimals);
+      } else {
+        this.tokenBalance = await this.contractService.balanceOf(
+            environment.assetTokenAddress, this.contractService.address, environment.assetDecimals);
+      }
+    })(), (async ()=> {
+      let allowance;
+      if (this.tabIndex == 0) {
+        allowance = await this.contractService.getAllowance(
+            environment.assetTokenAddress,
+            this.contractService.address,
+            environment.retailHelperAddress,
+            environment.assetDecimals);
+      } else {
+        allowance = await this.contractService.getAllowance(
+            environment.usdcAddress,
+            this.contractService.address,
+            environment.retailHelperAddress,
+            environment.usdcDecimals);
+      }
+
+      this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
+    })(), (async ()=> {
+      const userInfo = await this.contractService.getUserInfo(this.contractService.address);
+      if (this.tabIndex == 0) {
+        this.predepositBalance = userInfo[0];
+      } else {
+        this.predepositBalance = userInfo[1];
+      }
+    })()];
+
+    this.loading = true;
+    await Promise.all(all);
+    this.loading = false;
   }
 
   max() {

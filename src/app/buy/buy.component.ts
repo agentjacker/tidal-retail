@@ -29,6 +29,7 @@ export class BuyComponent implements OnInit {
 
   assetIndex = environment.assetIndex;
   assetSymbol = environment.assetSymbol;
+  assetTokenAddress = environment.assetTokenAddress;
 
   filteredBuyerHistory = [{
     date: '10/21/2021',

@@ -17,7 +17,6 @@ export class BuyWithdrawComponent implements OnInit {
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
   amount: string = "";
-  usdcBalance: string = "";
   predepositBalance: string = "";
 
   assetIndex = environment.assetIndex;
@@ -28,22 +27,24 @@ export class BuyWithdrawComponent implements OnInit {
   constructor(private contractService: ContractService, private apiService: ApiService) { }
 
   ngOnInit() {
-    this.loading = true;
     this.load();
-    this.loading = false;
   }
 
   async load() {
-    if (this.contractService.address && this.contractService.usdcBalance) {
-      this.usdcBalance = this.contractService.usdcBalance;
-
-      const userInfo = await this.contractService.getUserInfo(this.contractService.address);
-      if (this.tabIndex == 0) {
-        this.predepositBalance = userInfo[0];
-      } else {
-        this.predepositBalance = userInfo[1];
-      }
+    if (!this.contractService.address) {
+      return;
     }
+
+    this.loading = true;
+
+    const userInfo = await this.contractService.getUserInfo(this.contractService.address);
+    if (this.tabIndex == 0) {
+      this.predepositBalance = userInfo[0];
+    } else {
+      this.predepositBalance = userInfo[1];
+    }
+
+    this.loading = false;
   }
 
   max() {
