@@ -39,9 +39,9 @@ export class BuyWithdrawComponent implements OnInit {
 
     const userInfo = await this.contractService.getUserInfo(this.contractService.address);
     if (this.tabIndex == 0) {
-      this.predepositBalance = userInfo[0];
+      this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
     } else {
-      this.predepositBalance = userInfo[1];
+      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
     }
 
     this.loading = false;
@@ -49,6 +49,14 @@ export class BuyWithdrawComponent implements OnInit {
 
   max() {
     this.amount = this.predepositBalance;
+  }
+
+  getTokenBalance(value, decimals=6) {
+    return ((+value) / (10 ** decimals)).toFixed(2);
+  }
+
+  formatTokenBalance(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   getNumber(x) {

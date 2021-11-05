@@ -50,15 +50,15 @@ export class BuyUnsubscribeComponent implements OnInit {
     this.loading = false;
 
     if (this.tabIndex == 0) {
-      this.predepositBalance = userInfo[0];
-      this.currentSubscription = userSubscription[0];
-      this.futureSubscription = userSubscription[2];
-      this.premiumAmount = userInfo[2];
+      this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
+      this.currentSubscription = this.getTokenBalance(userSubscription[0], environment.usdcDecimals);
+      this.futureSubscription = this.getTokenBalance(userSubscription[2], environment.usdcDecimals);
+      this.premiumAmount = this.getTokenBalance(userInfo[2], environment.usdcDecimals);
     } else {
-      this.predepositBalance = userInfo[1];
-      this.currentSubscription = userSubscription[1];
-      this.futureSubscription = userSubscription[3];
-      this.premiumAmount = userInfo[2];
+      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
+      this.currentSubscription = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
+      this.futureSubscription = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
+      this.premiumAmount = this.getTokenBalance(userInfo[2], environment.assetDecimals);
     }
   }
 
@@ -68,6 +68,14 @@ export class BuyUnsubscribeComponent implements OnInit {
 
   getNumber(x) {
     return parseFloat(x);
+  }
+
+  getTokenBalance(value, decimals) {
+    return ((+value) / (10 ** decimals)).toFixed(2);
+  }
+
+  formatTokenBalance(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   async unsubscribe() {

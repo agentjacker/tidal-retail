@@ -37,6 +37,8 @@ export class BuyDepositComponent implements OnInit {
       return;
     }
 
+    let allowance;
+
     const all = [(async ()=> {
       if (this.tabIndex == 0) {
         this.tokenBalance = await this.contractService.balanceOf(
@@ -46,7 +48,6 @@ export class BuyDepositComponent implements OnInit {
             environment.assetTokenAddress, this.contractService.address, environment.assetDecimals);
       }
     })(), (async ()=> {
-      let allowance;
       if (this.tabIndex == 0) {
         allowance = await this.contractService.getAllowance(
             environment.usdcAddress,
@@ -63,9 +64,9 @@ export class BuyDepositComponent implements OnInit {
     })(), (async ()=> {
       const userInfo = await this.contractService.getUserInfo(this.contractService.address);
       if (this.tabIndex == 0) {
-        this.predepositBalance = userInfo[0];
+        this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
       } else {
-        this.predepositBalance = userInfo[1];
+        this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
       }
     })()];
 
@@ -78,6 +79,14 @@ export class BuyDepositComponent implements OnInit {
 
   max() {
     this.amount = this.tokenBalance;
+  }
+
+  getTokenBalance(value, decimals) {
+    return ((+value) / (10 ** decimals)).toFixed(2);
+  }
+
+  formatTokenBalance(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   getNumber(x) {

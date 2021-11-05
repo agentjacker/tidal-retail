@@ -16,7 +16,7 @@
       <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">My Pre-deposit Balance:</p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
-      <p style=" margin-top: 0px; color: #002f9b; float: left;">{{ getNumber(predepositBalance).toFixed(2) }}
+      <p style=" margin-top: 0px; color: #002f9b; float: left;">{{ formatTokenBalance(predepositBalance) }}
         <span *ngIf="tabIndex==0">USDC</span>
         <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
       </p>

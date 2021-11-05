@@ -40,7 +40,7 @@
     <button class="pbutton" [ngStyle]="{'background-color': willDisableButton()? 'grey': '#002f9b'}" (click)="unsubscribe()" [disabled]="willDisableButton()" >{{ getNumber(amount) > getNumber(futureSubscription)? 'Insufficient Cover Amount' : 'Decrease' }} <span class="icon-spinner" *ngIf="loading"></span></button>
     <div style="width: 100%; display: inline-block; margin-top: 16px;" >
       <p class="title" style="float: left; font-size: 13px;">Pre-deposit Balance:</p>
-      <p class="number" style="float: right; font-size: 13px;">{{ predepositBalance }}
+      <p class="number" style="float: right; font-size: 13px;">{{ formatTokenBalance(predepositBalance) }}
         <span *ngIf="tabIndex==0">USDC</span>
         <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
       </p>
