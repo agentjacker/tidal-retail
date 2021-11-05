@@ -49,16 +49,16 @@ export class BuyDepositComponent implements OnInit {
       let allowance;
       if (this.tabIndex == 0) {
         allowance = await this.contractService.getAllowance(
-            environment.assetTokenAddress,
-            this.contractService.address,
-            environment.retailHelperAddress,
-            environment.assetDecimals);
-      } else {
-        allowance = await this.contractService.getAllowance(
             environment.usdcAddress,
             this.contractService.address,
             environment.retailHelperAddress,
             environment.usdcDecimals);
+      } else {
+        allowance = await this.contractService.getAllowance(
+            environment.assetTokenAddress,
+            this.contractService.address,
+            environment.retailHelperAddress,
+            environment.assetDecimals);
       }
 
       this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
