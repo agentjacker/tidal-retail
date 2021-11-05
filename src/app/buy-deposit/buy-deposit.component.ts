@@ -60,8 +60,6 @@ export class BuyDepositComponent implements OnInit {
             environment.retailHelperAddress,
             environment.assetDecimals);
       }
-
-      this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
     })(), (async ()=> {
       const userInfo = await this.contractService.getUserInfo(this.contractService.address);
       if (this.tabIndex == 0) {
@@ -74,6 +72,8 @@ export class BuyDepositComponent implements OnInit {
     this.loading = true;
     await Promise.all(all);
     this.loading = false;
+
+    this.needApproval = parseFloat(allowance) < parseFloat(this.tokenBalance);
   }
 
   max() {
