@@ -82,7 +82,8 @@ export class BuyComponent implements OnInit {
     })(), (async () => {
       this.premiumRate = await this.contractService.getPremiumRate(this.contractService.address);
     })(), (async () => {
-      this.effectiveCapacity = await this.contractService.getEffectiveCapacity();
+      this.effectiveCapacity = this.getTokenBalance(
+          (await this.contractService.getEffectiveCapacity()), environment.usdcDecimals);
     })()];
 
     this.loading = true;
