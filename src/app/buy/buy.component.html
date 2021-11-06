@@ -98,17 +98,15 @@
       <tr class="crypto-list-title">
         <td><strong>Date</strong></td>
         <td><strong>Covered TVL (Target)</strong></td>
-        <td><strong>Paid Amount</strong></td>
         <td><strong>Covered TVL (Actual)</strong></td>
-        <td><strong>Refund</strong></td>
+        <td><strong>Paid Amount</strong></td>
       </tr>
       <ng-container  *ngFor="let record of filteredBuyerHistory">
         <tr class="crypto-list-item">
           <td><span class="number">{{ record.date }}</span></td>
           <td><span class="number">{{ record.subscription }}</span></td>
-          <td><span class="number">{{ record.premium }}</span></td>
           <td><span class="number">{{ record.assetBalance }}</span></td>
-          <td><span class="number">{{ record.refund }}</span></td>
+          <td><span class="number">{{ record.premium }}</span></td>
         </tr>
       </ng-container>
     </table>
