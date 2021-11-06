@@ -90,15 +90,15 @@ export class BuyComponent implements OnInit {
     this.loading = false;
 
     if (this.tabIndex == 0) {
-      this.predepositBalance = userInfo[0];
-      this.myCurrentCoverage = userSubscription[0];
-      this.myFutureCoverage = userSubscription[2];
-      this.myCurrentPremium = (+userInfo[2]).toFixed(2);
+      this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
+      this.myCurrentCoverage = this.getTokenBalance(userSubscription[0], environment.usdcDecimals);
+      this.myFutureCoverage = this.getTokenBalance(userSubscription[2], environment.usdcDecimals);
+      this.myCurrentPremium = this.getTokenBalance(userInfo[2], environment.usdcDecimals);
     } else {
-      this.predepositBalance = userInfo[1];
-      this.myCurrentCoverage = userSubscription[1];
-      this.myFutureCoverage = userSubscription[3];
-      this.myCurrentPremium = (+userInfo[3]).toFixed(2);
+      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
+      this.myCurrentCoverage = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
+      this.myFutureCoverage = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
+      this.myCurrentPremium = this.getTokenBalance(userInfo[3], environment.assetDecimals);
     }
 
     this.myFuturePremium = ((+this.myFutureCoverage) * (+this.premiumRate) / 1e6).toFixed(2);
@@ -108,14 +108,12 @@ export class BuyComponent implements OnInit {
     this.load();
   }
 
-  formatBalance(value, decimals=6) {
-    const result = '$' + ((+value) / (10 ** decimals)).toFixed(2);
-    return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  getTokenBalance(value, decimals) {
+    return ((+value) / (10 ** decimals)).toFixed(2);
   }
 
-  formatTokenBalance(value, decimals=6) {
-    const result = ((+value) / (10 ** decimals)).toFixed(2);
-    return result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  formatTokenBalance(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   formatDate(timestamp) {
