@@ -25,7 +25,7 @@
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
       <p style=" margin-top: 0px; color: #002f9b; float: left;">
-        {{ premiumAmount }} {{getNumber(amount)? ' - ' + (getNumber(premiumAmount) / getNumber(futureSubscription) * getNumber(amount)).toFixed(2): '' }}
+        {{ premiumAmount }} {{getNumber(amount)? ' - ' + (getNumber(premiumRate) * getNumber(amount) / 1e6).toFixed(2): '' }}
         <span *ngIf="tabIndex==0">USDC</span>
         <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
         / Week
