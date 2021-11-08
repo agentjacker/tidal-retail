@@ -56,10 +56,10 @@
         <span class="number">
           <span class="icon-spinner" *ngIf="loading"></span>
           <span class="number"
-              *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">{{ myCurrentCoverage }}
+              *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">${{ myCurrentCoverage }}
           </span>
           <span class="number"
-              *ngIf="!loading&&myCurrentCoverage!=myFutureCoverage">{{ myCurrentCoverage }} (this week) <br/>
+              *ngIf="!loading&&myCurrentCoverage!=myFutureCoverage">${{ myCurrentCoverage }} (this week) <br/>
             {{ myFutureCoverage }} (next week)
           </span>
         </span>
@@ -68,14 +68,11 @@
         <span>My Cover Cost (weekly)</span>
         <span class="number">
           <span class="icon-spinner" *ngIf="loading"></span>
-          <ng-container *ngIf="getNumber(myCurrentCoverage) > 0">
-            <span class="number" *ngIf="loading&&myCurrentPremium==myFuturePremium">${{ formatTokenBalance(myCurrentPremium) }}</span>
-            <span class="number" *ngIf="loading&&myCurrentPremium!=myFuturePremium">${{ formatTokenBalance(myCurrentPremium) }} (this week) <br/>
+          <ng-container>
+            <span class="number" *ngIf="!loading&&myCurrentPremium==myFuturePremium">${{ formatTokenBalance(myCurrentPremium) }}</span>
+            <span class="number" *ngIf="!loading&&myCurrentPremium!=myFuturePremium">${{ formatTokenBalance(myCurrentPremium) }} (this week) <br/>
               ${{ formatTokenBalance(myFuturePremium) }} (next week)
             </span>
-          </ng-container>
-          <ng-container *ngIf="getNumber(myCurrentCoverage)==0">
-            <span class="-suspended">Not Covered</span>
           </ng-container>
         </span>
       </div>
