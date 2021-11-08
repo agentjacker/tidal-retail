@@ -19,10 +19,9 @@ export class BuySubscribeComponent implements OnInit {
 
   amount: string = "";
   predepositBalance: string = "";
-  coveredAmount: string = "";
-  currentSubscription: string = "";
   futureSubscription: string = "";
-  premiumAmount: string = "";
+  futureSubscriptionNumber = 0;
+  futurePremium: string = "";
 
   assetIndex = environment.assetIndex;
   assetSymbol = environment.assetSymbol;
@@ -38,11 +37,14 @@ export class BuySubscribeComponent implements OnInit {
   async load() {
     let userInfo;
     let userSubscription;
+    let premiumRate;
 
     const all = [(async () => {
       userInfo = await this.contractService.getUserInfo(this.contractService.address);
     })(), (async () => {
       userSubscription = await this.contractService.getSubscriptionByUser(this.contractService.address);
+    })(), (async () => {
+      premiumRate = await this.contractService.getPremiumRate(this.contractService.address);
     })()];
 
     this.loading = true;
@@ -51,19 +53,25 @@ export class BuySubscribeComponent implements OnInit {
 
     if (this.tabIndex == 0) {
       this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
-      this.currentSubscription = this.getTokenBalance(userSubscription[0], environment.usdcDecimals);
       this.futureSubscription = this.getTokenBalance(userSubscription[2], environment.usdcDecimals);
-      this.premiumAmount = this.getTokenBalance(userInfo[2], environment.usdcDecimals);
+      this.futureSubscriptionNumber = (+userSubscription[2]) / (10 ** environment.usdcDecimals);
+      this.futurePremium = this.getTokenBalance(
+          ((+userSubscription[2]) * premiumRate / 1e6).toFixed(2), environment.usdcDecimals);
     } else {
       this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
-      this.currentSubscription = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
       this.futureSubscription = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
-      this.premiumAmount = this.getTokenBalance(userInfo[2], environment.assetDecimals);
+      this.futureSubscriptionNumber = (+userSubscription[3]) / (10 ** environment.usdcDecimals);
+      this.futurePremium = this.getTokenBalance(
+          ((+userSubscription[3]) * premiumRate / 1e6).toFixed(2), environment.usdcDecimals);
     }
   }
 
   max() {
     this.amount = this.predepositBalance;
+  }
+
+  isNumber(x) {
+    return !isNaN(parseFloat(x));
   }
 
   getNumber(x) {
@@ -78,10 +86,19 @@ export class BuySubscribeComponent implements OnInit {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  async subscribe() {
+  async adjust() {
+    const amount = this.getNumber(this.amount);
+
     this.loading = true;
     try {
-      await this.contractService.subscribe(+this.amount, this.tabIndex==0);
+      if (amount > this.futureSubscriptionNumber) {
+        const amountToAdd = +(amount - this.futureSubscriptionNumber).toFixed(2);
+        await this.contractService.subscribe(amountToAdd, this.tabIndex==0);
+      } else {
+        const amountToReduce = +(this.futureSubscriptionNumber - amount).toFixed(2);
+        await this.contractService.unsubscribe(amountToReduce, this.tabIndex==0);
+      }
+
       await this.load();
     } catch(e) {
     }
@@ -91,8 +108,7 @@ export class BuySubscribeComponent implements OnInit {
   }
 
   willDisableButton() {
-    const buttonDisabled = (this.loading || !this.amount || !this.getNumber(this.amount) ||
-      (this.getNumber(this.premiumAmount) + this.getNumber(this.premiumRate) * this.getNumber(this.amount) / 1e6) > this.getNumber(this.predepositBalance));
+    const buttonDisabled = (this.loading || isNaN(+this.amount));
     return buttonDisabled;
   }
 

@@ -13,7 +13,6 @@ import { BuyComponent } from './buy/buy.component';
 import { BuyDepositComponent } from './buy-deposit/buy-deposit.component';
 import { BuyWithdrawComponent } from './buy-withdraw/buy-withdraw.component';
 import { BuySubscribeComponent } from './buy-subscribe/buy-subscribe.component';
-import { BuyUnsubscribeComponent } from './buy-unsubscribe/buy-unsubscribe.component';
 import { NotificationMessageComponent } from './notification-message/notification-message.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsComponent } from './settings/settings.component';
@@ -31,7 +30,6 @@ import { PaginatorComponent } from './paginator/paginator.component';
     BuyDepositComponent,
     BuyWithdrawComponent,
     BuySubscribeComponent,
-    BuyUnsubscribeComponent,
     NotificationMessageComponent,
     SettingsComponent,
     PaginatorComponent,

@@ -13,31 +13,35 @@
       </p>
       </div>
     <div style="width: 100%; display: inline-block;">
-      <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">Current Cover Amount:</p> 
+      <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">Upcoming Cover Amount:</p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
       <p style=" margin-top: 0px; color: #002f9b; float: left;">
-        ${{ futureSubscription }} {{getNumber(amount)? ' + ' + getNumber(amount).toFixed(2): '' }}
+        ${{isNumber(amount) ? getNumber(amount).toFixed(2) : futureSubscription }}
       </p>
     </div>
     <div style="width: 100%; display: inline-block; margin-top: -8px;">
-      <p style="color: #002f9b; margin-top: 16px; float: left; margin-bottom: 0px;">Current Cover Cost:</p> 
+      <p style="color: #002f9b; margin-top: 16px; float: left; margin-bottom: 0px;">Upcoming Cover Cost:
+      </p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
       <p style=" margin-top: 0px; color: #002f9b; float: left;">
-        {{ premiumAmount }} {{getNumber(amount)? ' + ' + (getNumber(premiumRate) * getNumber(amount) / 1e6).toFixed(2): '' }}
-        <span *ngIf="tabIndex==0">USDC</span>
-        <span *ngIf="tabIndex==1">{{assetSymbol}}</span>
+        ${{isNumber(amount) ? (getNumber(premiumRate) * getNumber(amount) / 1e6).toFixed(2) : futurePremium }}
         / Week
       </p>
     </div>
     <div style="width: 100%; display: inline-block;">
-      <p style="color: #002f9b; margin-top: 8px; float: left">Amount to Increase</p>
+      <p style="color: #002f9b; margin-top: 8px; float: left">Amount to adjust to</p>
     </div>
     <div class="deposit-input">
       <input type="number" placeholder="" [(ngModel)]="amount" value="{{amount}}" min="0" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? this.value : null" />
     </div>
-    <button class="pbutton" [ngStyle]="{'background-color': willDisableButton() ? 'grey': '#002f9b'}" (click)="subscribe()" [disabled]="willDisableButton()" >{{ (getNumber(premiumAmount) + getNumber(premiumRate) * getNumber(amount) / 1e6) > getNumber(predepositBalance)? 'Insufficient Fund' : 'Increase' }} <span class="icon-spinner" *ngIf="loading"></span></button>
+    <button class="pbutton"
+        [ngStyle]="{'background-color': willDisableButton() ? 'grey': '#002f9b'}"
+        (click)="adjust()" [disabled]="willDisableButton()" >
+      Adjust
+      <span class="icon-spinner" *ngIf="loading"></span>
+    </button>
     <div style="width: 100%; display: inline-block; margin-top: 16px;" >
       <p class="title" style="float: left; font-size: 13px;">Pre-deposit Balance:</p>
       <p class="number" style="float: right; font-size: 13px;">{{ formatTokenBalance(predepositBalance) }}

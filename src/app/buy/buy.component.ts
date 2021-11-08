@@ -54,7 +54,6 @@ export class BuyComponent implements OnInit {
   willShowDeposit: boolean = false;
   willShowWithdraw: boolean = false;
   willShowSubscribe: boolean = false;
-  willShowUnsubscribe: boolean = false;
 
   alertTitle: string = "";
   alertBody: string = "";
@@ -95,14 +94,16 @@ export class BuyComponent implements OnInit {
       this.myCurrentCoverage = this.getTokenBalance(userSubscription[0], environment.usdcDecimals);
       this.myFutureCoverage = this.getTokenBalance(userSubscription[2], environment.usdcDecimals);
       this.myCurrentPremium = this.getTokenBalance(userInfo[2], environment.usdcDecimals);
+      this.myFuturePremium = this.getTokenBalance(
+          ((+userSubscription[2]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
     } else {
       this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
       this.myCurrentCoverage = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
       this.myFutureCoverage = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
       this.myCurrentPremium = this.getTokenBalance(userInfo[3], environment.assetDecimals);
+      this.myFuturePremium = this.getTokenBalance(
+          ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
     }
-
-    this.myFuturePremium = ((+this.myFutureCoverage) * (+this.premiumRate) / 1e6).toFixed(2);
   }
 
   refresh() {
@@ -172,20 +173,6 @@ export class BuyComponent implements OnInit {
 
   closeSubscribe() {
     this.willShowSubscribe = false;
-  }
-
-  showUnsubscribe(assetIndex: number) {
-    if (!this.contractService.address) {
-      this.showAlert("Please connect to MetaMask", "");
-      return;
-    }
-
-    this.willShowUnsubscribe = true;
-    this.assetSymbol = this.asset.assetSymbol;
-  }
-
-  closeUnsubscribe() {
-    this.willShowUnsubscribe = false;
   }
 
   showAlert(title, body) {

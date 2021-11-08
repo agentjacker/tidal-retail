@@ -80,11 +80,8 @@
         </span>
       </div>
       <div class="guarantor-operation">
-        <span (click)="showSubscribe(assetIndex)">
-          <img src="/assets/images/asset-Increase.svg">
-        </span>
-        <span (click)="showUnsubscribe(assetIndex)">
-          <img src="/assets/images/asset-decrease.svg">
+        <span (click)="showSubscribe(assetIndex)" class="button" style="font-weight: 600;">
+          Adjust
         </span>
       </div>
     </div>
@@ -143,15 +140,6 @@
   (onClose)="closeSubscribe()"
   (onRefresh)="refresh()">
 </app-buy-subscribe>
-
-<app-buy-unsubscribe
-  style="height: 100%; width: 100%; z-index: 1; position: Fixed; left: 0; top: 0"
-  *ngIf="willShowUnsubscribe"
-  [tabIndex]=tabIndex
-  [premiumRate]=premiumRate
-  (onClose)="closeUnsubscribe()"
-  (onRefresh)="refresh()">
-</app-buy-unsubscribe>
 
 <app-alert-message
   [title]="alertTitle"
