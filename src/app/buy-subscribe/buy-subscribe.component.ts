@@ -87,18 +87,11 @@ export class BuySubscribeComponent implements OnInit {
   }
 
   async adjust() {
-    const amount = this.getNumber(this.amount);
+    const amount = +this.getNumber(this.amount).toFixed(2);
 
     this.loading = true;
     try {
-      if (amount > this.futureSubscriptionNumber) {
-        const amountToAdd = +(amount - this.futureSubscriptionNumber).toFixed(2);
-        await this.contractService.subscribe(amountToAdd, this.tabIndex==0);
-      } else {
-        const amountToReduce = +(this.futureSubscriptionNumber - amount).toFixed(2);
-        await this.contractService.unsubscribe(amountToReduce, this.tabIndex==0);
-      }
-
+      await this.contractService.adjustSubscription(amount, this.tabIndex==0);
       await this.load();
     } catch(e) {
     }

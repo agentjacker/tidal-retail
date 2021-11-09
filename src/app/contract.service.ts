@@ -190,10 +190,10 @@ export class ContractService {
     const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
     if (isBase) {
       const res = retailHelper.methods.depositBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      return await this._send(res, transactionsDescriptions.depositTransaction);
     } else {
       const res = retailHelper.methods.depositAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      return await this._send(res, transactionsDescriptions.depositTransaction);
     }
   }
 
@@ -201,32 +201,21 @@ export class ContractService {
     const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
     if (isBase) {
       const res = retailHelper.methods.withdrawBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      return await this._send(res, transactionsDescriptions.withdrawTransaction);
     } else {
       const res = retailHelper.methods.withdrawAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      return await this._send(res, transactionsDescriptions.withdrawTransaction);
     }
   }
 
-  async subscribe(amount, isBase=true) {
+  async adjustSubscription(amount, isBase=true) {
     const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
     if (isBase) {
-      const res = retailHelper.methods.subscribeBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      const res = retailHelper.methods.adjustSubscriptionBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.adjustSubscriptionTransaction);
     } else {
-      const res = retailHelper.methods.subscribeAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
-    }
-  }
-
-  async unsubscribe(amount, isBase=true) {
-    const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
-    if (isBase) {
-      const res = retailHelper.methods.unsubscribeBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
-    } else {
-      const res = retailHelper.methods.unsubscribeAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
-      return await this._send(res, transactionsDescriptions.buyerDepositTransaction);
+      const res = retailHelper.methods.adjustSubscriptionAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      return await this._send(res, transactionsDescriptions.adjustSubscriptionTransaction);
     }
   }
 
