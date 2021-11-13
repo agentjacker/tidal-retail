@@ -260,19 +260,34 @@ h2.title {
   justify-content: center;
   gap: 10px;
 }
+
 .adjust-button {
   /* max-width: 85px; */
 }
+
 #buyBox .number {
   font-size: 24px;
   display: flex;
   align-items: center;
   margin-bottom: 0;
 }
+
 .number.font-36-blue {
   line-height: normal;
 }
+
 .column-6.number-box {
   display: flex;
   align-items: center;
+}
+
+.btn-page {
+    width: 80px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 1px solid #8EA2D2;
+    box-sizing: border-box;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px;
 }

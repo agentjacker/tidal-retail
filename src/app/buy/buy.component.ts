@@ -23,6 +23,8 @@ export class BuyComponent implements OnInit {
   myCurrentPremium: string = "";
   myFuturePremium: string = "";
 
+  records = [];
+
   loading = false;
 
   tabIndex = 0;
@@ -30,6 +32,9 @@ export class BuyComponent implements OnInit {
   assetIndex = environment.assetIndex;
   assetSymbol = environment.assetSymbol;
   assetTokenAddress = environment.assetTokenAddress;
+
+  pageLimit = 20;
+  pageOffset = 0;
 
   filteredBuyerHistory = [{
     date: '10/21/2021',
@@ -83,6 +88,8 @@ export class BuyComponent implements OnInit {
     })(), (async () => {
       this.effectiveCapacity = this.getTokenBalance(
           (await this.contractService.getEffectiveCapacity()), environment.usdcDecimals);
+    })(), (async () => {
+      await this.loadRecords();
     })()];
 
     this.loading = true;
@@ -104,6 +111,11 @@ export class BuyComponent implements OnInit {
       this.myFuturePremium = this.getTokenBalance(
           ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
     }
+  }
+
+  async loadRecords() {
+    this.records = await this.apiService.getRetailHistory(
+        this.assetIndex, this.contractService.address, this.pageLimit, this.pageOffset);
   }
 
   refresh() {
@@ -191,5 +203,32 @@ export class BuyComponent implements OnInit {
 
   showAssetTab() {
     this.tabIndex = 1;
+  }
+
+  goFirst() {
+    this.pageOffset = 0;
+    this.loadRecords();
+  }
+
+  goPrev() {
+    this.pageOffset -= this.pageLimit;
+    this.loadRecords();
+  }
+
+  goNext() {
+    this.pageOffset -= this.pageLimit;
+    this.loadRecords();
+  }
+
+  hasFirst() {
+    return this.pageOffset > 0;
+  }
+
+  hasPrev() {
+    return this.pageOffset >= this.pageLimit;
+  }
+
+  hasNext() {
+    return this.records.length >= this.pageLimit;
   }
 }

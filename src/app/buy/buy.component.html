@@ -95,20 +95,32 @@
         <td><strong>Covered TVL (Actual)</strong></td>
         <td><strong>Paid Amount</strong></td>
       </tr>
-      <ng-container  *ngFor="let record of filteredBuyerHistory">
-        <tr class="crypto-list-item">
-          <td><span class="number">{{ record.date }}</span></td>
-          <td><span class="number">{{ record.subscription }}</span></td>
-          <td><span class="number">{{ record.assetBalance }}</span></td>
-          <td><span class="number">{{ record.premium }}</span></td>
+      <ng-container  *ngFor="let record of records">
+        <tr class="crypto-list-item" *ngIf="tabId==0">
+          <td><span class="number">{{ formatDate(record.blockTime) }}</span></td>
+          <td><span class="number">${{ formatTokenBalance(record.futureBase) }}</span></td>
+          <td><span class="number">${{ formatTokenBalance(record.currentBase) }}</span></td>
+          <td><span class="number">${{ formatTokenBalance(record.premiumBase) }}</span></td>
+        </tr>
+        <tr class="crypto-list-item" *ngIf="tabId==1">
+          <td><span class="number">{{ formatDate(record.blockTime) }}</span></td>
+          <td><span class="number">${{ formatTokenBalance(record.futureAsset) }}</span></td>
+          <td><span class="number">${{ formatTokenBalance(record.currentAsset) }}</span></td>
+          <td><span class="number">{{ formatTokenBalance(record.premiumAsset) }}</span>{{assetSymbol}}</td>
         </tr>
       </ng-container>
     </table>
   </div>
 </div>
 
-<div class="crypto-list row">
-  <app-paginator></app-paginator>
+<div class="crypto-list row" style="display: flex;">
+  <div style="width: 50%; text-align: left;">
+    <button class="btn-page" *ngIf="hasFirst()" (click)="goFirst()">First Page</button>
+    <button class="btn-page" *ngIf="hasPrev()" (click)="goPrev()">Prev Page</button>
+  </div>
+  <div style="width: 50%; text-align: right;">
+    <button class="btn-page" *ngIf="hasNext()" (click)="goNext()">Next Page</button>
+  </div>
 </div>
 </div>
 
