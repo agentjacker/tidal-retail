@@ -19,6 +19,7 @@ export const environment = {
   tidalDecimals: 18,
   usdcDecimals: 6,
   assetDecimals: 18,
+  assetPrecision: 2,
   chainId: 137,
   assetIndex: 2,
   assetSymbol: "POND"

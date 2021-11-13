@@ -36,26 +36,6 @@ export class BuyComponent implements OnInit {
   pageLimit = 20;
   pageOffset = 0;
 
-  filteredBuyerHistory = [{
-    date: '10/21/2021',
-    subscription: '$100,100',
-    premium: '$3423',
-    assetBalance: '$324',
-    refund: '$1000'
-  },{
-    date: '10/21/2021',
-    subscription: '$100,100',
-    premium: '$3423',
-    assetBalance: '$324',
-    refund: '$1000'
-  },{
-    date: '10/21/2021',
-    subscription: '$100,100',
-    premium: '$3423',
-    assetBalance: '$324',
-    refund: '$1000'
-  }];
-
   willShowDeposit: boolean = false;
   willShowWithdraw: boolean = false;
   willShowSubscribe: boolean = false;
@@ -109,7 +89,9 @@ export class BuyComponent implements OnInit {
       this.myFutureCoverage = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
       this.myCurrentPremium = this.getTokenBalance(userInfo[3], environment.assetDecimals);
       this.myFuturePremium = this.getTokenBalance(
-          ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
+          ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(environment.assetPrecision),
+          environment.usdcDecimals,
+          environment.assetPrecision);
     }
   }
 
@@ -122,8 +104,8 @@ export class BuyComponent implements OnInit {
     this.load();
   }
 
-  getTokenBalance(value, decimals) {
-    return ((+value) / (10 ** decimals)).toFixed(2);
+  getTokenBalance(value, decimals, precision=2) {
+    return ((+value) / (10 ** decimals)).toFixed(precision);
   }
 
   formatTokenBalance(value) {

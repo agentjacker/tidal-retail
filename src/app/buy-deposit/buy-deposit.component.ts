@@ -82,7 +82,7 @@ export class BuyDepositComponent implements OnInit {
   }
 
   getTokenBalance(value, decimals) {
-    return ((+value) / (10 ** decimals)).toFixed(2);
+    return ((+value) / (10 ** decimals)).toFixed(environment.assetPrecision);
   }
 
   formatTokenBalance(value) {
@@ -93,6 +93,7 @@ export class BuyDepositComponent implements OnInit {
     if(!x) {
       return 0;
     }
+
     return parseFloat(x);
   }
 
