@@ -84,10 +84,11 @@ export class BuyComponent implements OnInit {
       this.myFuturePremium = this.getTokenBalance(
           ((+userSubscription[2]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
     } else {
-      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
+      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals, environment.assetPrecision);
       this.myCurrentCoverage = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
       this.myFutureCoverage = this.getTokenBalance(userSubscription[3], environment.usdcDecimals);
-      this.myCurrentPremium = this.getTokenBalance(userInfo[3], environment.assetDecimals);
+      this.myCurrentPremium = this.getTokenBalance(
+          userInfo[3], environment.assetDecimals, environment.assetPrecision);
       this.myFuturePremium = this.getTokenBalance(
           ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(environment.assetPrecision),
           environment.usdcDecimals,
@@ -109,7 +110,8 @@ export class BuyComponent implements OnInit {
   }
 
   formatTokenBalance(value) {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const arr = value.toString().split(".");
+    return [arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","), arr[1]].join(".");
   }
 
   formatDate(timestamp) {
@@ -181,10 +183,12 @@ export class BuyComponent implements OnInit {
 
   showUSDCTab() {
     this.tabIndex = 0;
+    this.load();
   }
 
   showAssetTab() {
     this.tabIndex = 1;
+    this.load();
   }
 
   goFirst() {

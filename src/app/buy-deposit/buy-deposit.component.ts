@@ -45,7 +45,7 @@ export class BuyDepositComponent implements OnInit {
             environment.usdcAddress, this.contractService.address, environment.usdcDecimals);
       } else {
         this.tokenBalance = await this.contractService.balanceOf(
-            environment.assetTokenAddress, this.contractService.address, environment.assetDecimals);
+            environment.assetTokenAddress, this.contractService.address, environment.assetDecimals, environment.assetPrecision);
       }
     })(), (async ()=> {
       if (this.tabIndex == 0) {
@@ -59,14 +59,16 @@ export class BuyDepositComponent implements OnInit {
             environment.assetTokenAddress,
             this.contractService.address,
             environment.retailHelperAddress,
-            environment.assetDecimals);
+            environment.assetDecimals,
+            environment.assetPrecision);
       }
     })(), (async ()=> {
       const userInfo = await this.contractService.getUserInfo(this.contractService.address);
       if (this.tabIndex == 0) {
         this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
       } else {
-        this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
+        this.predepositBalance = this.getTokenBalance(
+            userInfo[1], environment.assetDecimals, environment.assetPrecision);
       }
     })()];
 
@@ -81,12 +83,13 @@ export class BuyDepositComponent implements OnInit {
     this.amount = this.tokenBalance;
   }
 
-  getTokenBalance(value, decimals) {
-    return ((+value) / (10 ** decimals)).toFixed(environment.assetPrecision);
+  getTokenBalance(value, decimals, precision=2) {
+    return ((+value) / (10 ** decimals)).toFixed(precision);
   }
 
   formatTokenBalance(value) {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const arr = value.toString().split(".");
+    return [arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","), arr[1]].join(".");
   }
 
   getNumber(x) {

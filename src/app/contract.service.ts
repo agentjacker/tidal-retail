@@ -18,8 +18,8 @@ export class ContractService {
   constructor(private transactionsService: TransactionsService, private notifications: NotificationsService) {
   }
 
-  getFixedTwoStr(value: number) {
-    return (Math.max(0, value - 0.005)).toFixed(2).toString();
+  getFixedStr(value: number, precision: number) {
+    return (Math.max(0, value - 0.1 ** precision / 2)).toFixed(precision).toString();
   }
 
   _wait(duration) {
@@ -65,16 +65,16 @@ export class ContractService {
     return this.address;
   }
 
-  async balanceOf(tokenAddress, address, decimal) {
+  async balanceOf(tokenAddress, address, decimal, precision=2) {
     const token = new this.web3.eth.Contract(environment.erc20Abi, tokenAddress);
     const value = await token.methods.balanceOf(address).call();
-    return this.getFixedTwoStr((+value) / (10 ** decimal));
+    return this.getFixedStr((+value) / (10 ** decimal), precision);
   }
 
-  async getAllowance(tokenAddress, address, spender, decimal) {
+  async getAllowance(tokenAddress, address, spender, decimal, precision=2) {
     const token = new this.web3.eth.Contract(environment.erc20Abi, tokenAddress);
     const value = await token.methods.allowance(address, spender).call();
-    return this.getFixedTwoStr((+value) / (10 ** decimal));
+    return this.getFixedStr((+value) / (10 ** decimal), precision);
   }
 
   async loadUSDCBalance(address) {
