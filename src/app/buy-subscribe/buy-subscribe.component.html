@@ -1,7 +1,7 @@
 <div class="popup-bg">
   <div class="popup-window" style="text-align: center; background-color: #dfffff; max-width: 380px; height: 558px;">
     <div class="popup-title title" style="font-size: 18px; padding-left: 32px; background-color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
-      {{'Increase ' + assetSymbol + ' Cover Amount'}}
+      Adjust Cover Amount
       <a class="icon fr" href="javascript:void(0)" (click)="close()">x</a>
     </div>
     <div style="padding-left: 48px; padding-right: 48px; margin-top: 0px; padding-top: 8px; background-color: #dfffff;">
@@ -9,11 +9,11 @@
       <div style="float: left; margin-right: 6px;"><img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-top: 16px;" /></div>
       
       <p style="color: #4c6db9; overflow: hidden; text-align: left;">
-      Increased my cover amount will become effective in the next epoch | week. Amount can be rewritten anytime in the current epoch.
+      Adjusted cover amount will become effective in the next epoch | week. Amount can be rewritten anytime in the current epoch.
       </p>
       </div>
     <div style="width: 100%; display: inline-block;">
-      <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">Upcoming Cover Amount:</p> 
+      <p style="color: #002f9b; margin-top: 4px; float: left; margin-bottom: 0px;">Cover Amount:</p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
       <p style=" margin-top: 0px; color: #002f9b; float: left;">
@@ -21,7 +21,7 @@
       </p>
     </div>
     <div style="width: 100%; display: inline-block; margin-top: -8px;">
-      <p style="color: #002f9b; margin-top: 16px; float: left; margin-bottom: 0px;">Upcoming Cover Cost:
+      <p style="color: #002f9b; margin-top: 16px; float: left; margin-bottom: 0px;">Cover Cost:
       </p> 
     </div>
     <div style="width: 100%; display: inline-block; margin-top: 1px;">
@@ -31,7 +31,7 @@
       </p>
     </div>
     <div style="width: 100%; display: inline-block;">
-      <p style="color: #002f9b; margin-top: 8px; float: left">Amount to adjust to</p>
+      <p style="color: #002f9b; margin-top: 8px; float: left">New Amount</p>
     </div>
     <div class="deposit-input">
       <input type="number" placeholder="" [(ngModel)]="amount" value="{{amount}}" min="0" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? this.value : null" />
