@@ -41,7 +41,7 @@ export class BuyWithdrawComponent implements OnInit {
     if (this.tabIndex == 0) {
       this.predepositBalance = this.getTokenBalance(userInfo[0], environment.usdcDecimals);
     } else {
-      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals);
+      this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals, environment.assetDecimals);
     }
 
     this.loading = false;
@@ -51,8 +51,8 @@ export class BuyWithdrawComponent implements OnInit {
     this.amount = this.predepositBalance;
   }
 
-  getTokenBalance(value, decimals=6) {
-    return ((+value) / (10 ** decimals)).toFixed(2);
+  getTokenBalance(value, decimals=6, precision=2) {
+    return ((+value) / (10 ** decimals)).toFixed(precision);
   }
 
   formatTokenBalance(value) {
