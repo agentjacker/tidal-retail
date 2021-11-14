@@ -186,24 +186,24 @@ export class ContractService {
     return '0x' + hex.join('');
   }
 
-  async deposit(amount, isBase=true) {
+  async deposit(amount, isBase=true, decimals=environment.usdcDecimals) {
     const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
     if (isBase) {
       const res = retailHelper.methods.depositBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
       return await this._send(res, transactionsDescriptions.depositTransaction);
     } else {
-      const res = retailHelper.methods.depositAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      const res = retailHelper.methods.depositAsset(environment.assetIndex, this._decToHex(amount, decimals)).send({from: this.address});
       return await this._send(res, transactionsDescriptions.depositTransaction);
     }
   }
 
-  async withdraw(amount, isBase=true) {
+  async withdraw(amount, isBase=true, decimals=environment.usdcDecimals) {
     const retailHelper = new (this._getWeb3().eth.Contract)(environment.retailHelperAbi, environment.retailHelperAddress);
     if (isBase) {
       const res = retailHelper.methods.withdrawBase(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
       return await this._send(res, transactionsDescriptions.withdrawTransaction);
     } else {
-      const res = retailHelper.methods.withdrawAsset(environment.assetIndex, this._decToHex(amount, environment.usdcDecimals)).send({from: this.address});
+      const res = retailHelper.methods.withdrawAsset(environment.assetIndex, this._decToHex(amount, decimals)).send({from: this.address});
       return await this._send(res, transactionsDescriptions.withdrawTransaction);
     }
   }

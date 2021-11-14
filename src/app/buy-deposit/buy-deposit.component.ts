@@ -125,7 +125,7 @@ export class BuyDepositComponent implements OnInit {
   async deposit() {
     this.loading = true;
     try {
-      await this.contractService.deposit(+this.amount, this.tabIndex==0);
+      await this.contractService.deposit(+this.amount, this.tabIndex==0, environment.assetDecimals);
       await this.load();
       this.amount = "";
     } catch(e) {

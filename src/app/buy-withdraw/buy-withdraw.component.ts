@@ -66,7 +66,7 @@ export class BuyWithdrawComponent implements OnInit {
   async withdraw() {
     this.loading = true;
     try {
-      await this.contractService.withdraw(+this.amount, this.tabIndex==0);
+      await this.contractService.withdraw(+this.amount, this.tabIndex==0, environment.assetDecimals);
       await this.load();
     } catch(e) {
     }
