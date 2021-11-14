@@ -111,7 +111,11 @@ export class BuyComponent implements OnInit {
 
   formatTokenBalance(value) {
     const arr = value.toString().split(".");
-    return [arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","), arr[1]].join(".");
+    if (arr[1]) {
+      return [arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","), arr[1]].join(".");
+    } else {
+      return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   }
 
   formatDate(timestamp) {

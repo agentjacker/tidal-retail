@@ -96,13 +96,13 @@
         <td><strong>Paid Amount</strong></td>
       </tr>
       <ng-container  *ngFor="let record of records">
-        <tr class="crypto-list-item" *ngIf="tabId==0">
+        <tr class="crypto-list-item" *ngIf="tabIndex==0">
           <td><span class="number">{{ formatDate(record.blockTime) }}</span></td>
           <td><span class="number">${{ formatTokenBalance(record.futureBase) }}</span></td>
           <td><span class="number">${{ formatTokenBalance(record.currentBase) }}</span></td>
           <td><span class="number">${{ formatTokenBalance(record.premiumBase) }}</span></td>
         </tr>
-        <tr class="crypto-list-item" *ngIf="tabId==1">
+        <tr class="crypto-list-item" *ngIf="tabIndex==1">
           <td><span class="number">{{ formatDate(record.blockTime) }}</span></td>
           <td><span class="number">${{ formatTokenBalance(record.futureAsset) }}</span></td>
           <td><span class="number">${{ formatTokenBalance(record.currentAsset) }}</span></td>
