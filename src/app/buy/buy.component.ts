@@ -97,8 +97,19 @@ export class BuyComponent implements OnInit {
   }
 
   async loadRecords() {
-    this.records = await this.apiService.getRetailHistory(
+    const records = await this.apiService.getRetailHistory(
         this.assetIndex, this.contractService.address, this.pageLimit, this.pageOffset);
+    this.records = records.map(r => {
+      return {
+        blockTime: r.blockTime,
+        futureBase: this.getTokenBalance(r.futureBase, environment.usdcDecimals),
+        currentBase: this.getTokenBalance(r.currentBase, environment.usdcDecimals),
+        premiumBase: this.getTokenBalance(r.premiumBase, environment.usdcDecimals),
+        futureAsset: this.getTokenBalance(r.futureAsset, environment.usdcDecimals),
+        currentAsset: this.getTokenBalance(r.currentAsset, environment.usdcDecimals),
+        premiumAsset: this.getTokenBalance(r.premiumAsset, environment.assetDecimals, environment.assetPrecision)
+      }
+    });
   }
 
   refresh() {

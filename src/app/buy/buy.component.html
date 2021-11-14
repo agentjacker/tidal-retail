@@ -56,11 +56,11 @@
         <span class="number">
           <span class="icon-spinner" *ngIf="loading"></span>
           <span class="number"
-              *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">${{ myCurrentCoverage }}
+              *ngIf="!loading&&myCurrentCoverage==myFutureCoverage">${{ formatTokenBalance(myCurrentCoverage) }}
           </span>
           <span class="number"
-              *ngIf="!loading&&myCurrentCoverage!=myFutureCoverage">${{ myCurrentCoverage }} (this week) <br/>
-            {{ myFutureCoverage }} (next week)
+              *ngIf="!loading&&myCurrentCoverage!=myFutureCoverage">${{ formatTokenBalance(myCurrentCoverage) }} (this week) <br/>
+            ${{ formatTokenBalance(myFutureCoverage) }} (next week)
           </span>
         </span>
       </div>
