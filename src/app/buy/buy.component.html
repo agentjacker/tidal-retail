@@ -31,9 +31,9 @@
     <div class="column-4 number-box" style="display: flex;
     justify-content: center;align-items: center;">
       <div id="coverageBox">
-        <p class="title" style="display: flex;">Estimate Coverage Period<img src="../../assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;" /></p>
-        <p class="number" *ngIf="sumOfPremium">{{ weeksBeCovered }} Weeks</p>
-        <p *ngIf="!sumOfPremium">Not covered yet</p>
+        <p class="title" style="display: flex;">Estimate Coverage Period<img src="/assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;"/></p>
+        <p class="number" *ngIf="myCurrentPremium">{{ weeksBeCovered }} Weeks</p>
+        <p *ngIf="!myCurrentPremium">Not covered yet</p>
       </div>
     </div>
   </div>

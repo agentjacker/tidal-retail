@@ -23,6 +23,8 @@ export class BuyComponent implements OnInit {
   myCurrentPremium: string = "";
   myFuturePremium: string = "";
 
+  weeksBeCovered = 0;
+
   records = [];
 
   loading = false;
@@ -83,6 +85,7 @@ export class BuyComponent implements OnInit {
       this.myCurrentPremium = this.getTokenBalance(userInfo[2], environment.usdcDecimals);
       this.myFuturePremium = this.getTokenBalance(
           ((+userSubscription[2]) * (+this.premiumRate) / 1e6).toFixed(2), environment.usdcDecimals);
+      this.weeksBeCovered = Math.floor((+userInfo[0]) / (+userInfo[2]));
     } else {
       this.predepositBalance = this.getTokenBalance(userInfo[1], environment.assetDecimals, environment.assetPrecision);
       this.myCurrentCoverage = this.getTokenBalance(userSubscription[1], environment.usdcDecimals);
@@ -93,6 +96,7 @@ export class BuyComponent implements OnInit {
           ((+userSubscription[3]) * (+this.premiumRate) / 1e6).toFixed(environment.assetPrecision),
           environment.usdcDecimals,
           environment.assetPrecision);
+      this.weeksBeCovered = Math.floor((+userInfo[1]) / (+userInfo[3]));
     }
   }
 
