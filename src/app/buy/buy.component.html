@@ -7,7 +7,7 @@
 
 <div class="margin-12-per" id="toggleTabBar">
   <div (click)="showUSDCTab()" class="flex-center-item" [ngClass]="{'tab-active': tabIndex==0}"><p>Pay with USDC</p></div>
-  <div (click)="showAssetTab()" class="flex-center-item" [ngClass]="{'tab-active': tabIndex==1}" *ngIf="assetTokenAddress"><p>Pay with POND</p></div>
+  <div (click)="showAssetTab()" class="flex-center-item" [ngClass]="{'tab-active': tabIndex==1}" *ngIf="assetTokenAddress"><p>Pay with {{assetSymbol}}</p></div>
 </div>
 
 <div class="tab-content margin-12-per">
@@ -32,8 +32,8 @@
     justify-content: center;align-items: center;">
       <div id="coverageBox">
         <p class="title" style="display: flex;">Estimate Coverage Period<img src="/assets/images/info.png" style="width: 20px; height: 20px; margin-left: 8px;"/></p>
-        <p class="number" *ngIf="myCurrentPremium">{{ weeksBeCovered }} Weeks</p>
-        <p *ngIf="!myCurrentPremium">Not covered yet</p>
+        <p class="number" *ngIf="isCovered">{{ weeksBeCovered }} Weeks</p>
+        <p *ngIf="!isCovered">Not covered yet</p>
       </div>
     </div>
   </div>
