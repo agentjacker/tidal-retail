@@ -101,7 +101,7 @@ export class BuyComponent implements OnInit {
       this.weeksBeCovered = Math.floor((+userInfo[1]) /
           ((+userInfo[3]) * (+assetInfo.tokenPrice / 1e18)) /
               (10 ** environment.usdcDecimals) * (10 ** environment.assetDecimals));
-      this.isCovered = (+userInfo[2]) > 0 && this.weeksBeCovered > 0;
+      this.isCovered = (+userInfo[3]) > 0 && this.weeksBeCovered > 0;
     }
   }
 
