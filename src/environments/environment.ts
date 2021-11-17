@@ -15,7 +15,7 @@ export const environment = {
   usdcAddress: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
   tidalAddress: "0xB41EC2c036f8a42DA384DDE6ADA79884F8b84b26",
   assetTokenAddress: "",
-  retailHelperAddress: "0x484CD69Ca7Bc827E9d103F4634dDd2262e7CcB2B",
+  retailHelperAddress: "0x1dbDCdC6732aE52D7EF51aB5647Bb510Bb28deb8",
   tidalDecimals: 18,
   usdcDecimals: 6,
   assetDecimals: 18,
